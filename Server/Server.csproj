@@ -248,7 +248,6 @@
       <Generator>MSLinqToSQLGenerator</Generator>
       <LastGenOutput>UO.designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
-      <CustomToolNamespace>Database</CustomToolNamespace>
     </None>
     <None Include="UODataSet.xsc">
       <DependentUpon>UODataSet.xsd</DependentUpon>
