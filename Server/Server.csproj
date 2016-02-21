@@ -12,7 +12,6 @@
     <StartupObject>Server.Core</StartupObject>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile />
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -25,6 +24,7 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -33,11 +33,11 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;ServUO</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NEWTIMERS, ServUO</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
@@ -50,7 +50,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <Prefer32Bit>false</Prefer32Bit>
-    <DefineConstants>DEBUG;TRACE;ServUO</DefineConstants>
+    <DefineConstants>TRACE;NEWTIMERS, ServUO</DefineConstants>
     <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
@@ -173,6 +173,7 @@
     <Compile Include=".\Utility.cs" />
     <Compile Include=".\VirtueInfo.cs" />
     <Compile Include=".\World.cs" />
+    <Compile Include="Config.cs" />
     <Compile Include="Gumps\Gump.cs" />
     <Compile Include="Gumps\GumpAlphaRegion.cs" />
     <Compile Include="Gumps\GumpBackground.cs" />
@@ -210,21 +211,23 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>UO.dbml</DependentUpon>
     </Compile>
+    <Compile Include="UODataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>UODataSet.xsd</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="servuo.ico" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.SqlServer.BulkInsertTask, Version=12.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data.Entity" />
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
-    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq" />
@@ -236,6 +239,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -244,9 +248,18 @@
       <Generator>MSLinqToSQLGenerator</Generator>
       <LastGenOutput>UO.designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <CustomToolNamespace>Database</CustomToolNamespace>
     </None>
-    <None Include="UO.dbml.layout">
-      <DependentUpon>UO.dbml</DependentUpon>
+    <None Include="UODataSet.xsc">
+      <DependentUpon>UODataSet.xsd</DependentUpon>
+    </None>
+    <None Include="UODataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>UODataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="UODataSet.xss">
+      <DependentUpon>UODataSet.xsd</DependentUpon>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -269,4 +282,13 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="UO.dbml.layout">
+      <DependentUpon>UO.dbml</DependentUpon>
+    </None>
+  </ItemGroup>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
 </Project>

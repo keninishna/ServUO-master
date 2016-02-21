@@ -5,6 +5,7 @@ using Server.Engines.Craft;
 using Server.Engines.XmlSpawner2;
 using Server.Factions;
 using Server.Network;
+using Server.Mobiles;
 using AMA = Server.Items.ArmorMeditationAllowance;
 using AMT = Server.Items.ArmorMaterialType;
 
@@ -2024,9 +2025,8 @@ namespace Server.Items
             // 15% chance of 2 sockets
             // 50% chance of 1 socket
             // the remainder will be 0 socket (31.4% in this case)
-            // uncomment the next line to prevent artifacts from being socketed
-            // if(ArtifactRarity == 0)
-            XmlSockets.ConfigureRandom(this, 2.0, 0.1, 0.5, 3.0, 15.0, 50.0);
+            if(XmlSpawner.SocketsEnabled)
+				XmlSockets.ConfigureRandom(this, 2.0, 0.1, 0.5, 3.0, 15.0, 50.0);
         }
 
         public override bool AllowSecureTrade(Mobile from, Mobile to, Mobile newOwner, bool accepted)
@@ -2437,7 +2437,7 @@ namespace Server.Items
             #endregion
 
             if (this.m_Crafter != null)
-                list.Add(1050043, this.m_Crafter.Name); // crafted by ~1_NAME~
+				list.Add(1050043, m_Crafter.TitleName); // crafted by ~1_NAME~
 
             #region Factions
             if (this.m_FactionState != null)
@@ -2595,14 +2595,6 @@ namespace Server.Items
             if ((prop = this.GetDurabilityBonus()) > 0)
                 list.Add(1060410, prop.ToString()); // durability ~1_val~%
 
-            if (m_ItemPower != ItemPower.None)
-            {
-                if (m_ItemPower <= ItemPower.LegendaryArtifact)
-                    list.Add(1151488 + ((int)m_ItemPower - 1));
-                else
-                    list.Add(1152281 + ((int)m_ItemPower - 9));
-            }
-
             if ((prop = this.ComputeStatReq(StatType.Str)) > 0)
                 list.Add(1061170, prop.ToString()); // strength requirement ~1_val~
 
@@ -2615,6 +2607,14 @@ namespace Server.Items
             {
                 list.Add(1072378); // <br>Only when full set is present:				
                 this.GetSetProperties(list);
+            }
+
+            if (m_ItemPower != ItemPower.None)
+            {
+                if (m_ItemPower <= ItemPower.LegendaryArtifact)
+                    list.Add(1151488 + ((int)m_ItemPower - 1));
+                else
+                    list.Add(1152281 + ((int)m_ItemPower - 9));
             }
         }
 

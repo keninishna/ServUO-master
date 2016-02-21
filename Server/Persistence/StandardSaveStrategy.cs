@@ -164,7 +164,7 @@ namespace Server
                 {
                     metrics.OnItemSaved((int)(bin.Position - start));
                 }
-                
+
                 idx.Write((int)(bin.Position - start));
 
                 item.FreeCache();

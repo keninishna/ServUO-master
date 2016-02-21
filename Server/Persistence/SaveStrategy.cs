@@ -7,7 +7,6 @@ namespace Server
         public abstract string Name { get; }
         public static SaveStrategy Acquire()
         {
-
             if (Core.MultiProcessor)
             {
                 int processorCount = Core.ProcessorCount;
@@ -15,45 +14,22 @@ namespace Server
 #if DynamicSaveStrategy
                 if (processorCount > 2)
                 {
-                            if (Core.UseSQL)
-            {
-                return new SQL();
-            }else{
                     return new DynamicSaveStrategy();
-                }
                 }
 #else
                 if (processorCount > 16)
                 {
-                    if (Core.UseSQL)
-                    {
-                        return new SQL();
-                    }
-                    else {
-                        return new ParallelSaveStrategy(processorCount);
-                    }
+                    return new ParallelSaveStrategy(processorCount);
                 }
 #endif
                 else
                 {
-                    if (Core.UseSQL)
-                    {
-                        return new SQL();
-                    }
-                    else {
-                        return new DualSaveStrategy();
-                    }
+                    return new DualSaveStrategy();
                 }
             }
             else
             {
-                if (Core.UseSQL)
-                {
-                    return new SQL();
-                }
-                else {
-                    return new StandardSaveStrategy();
-                }
+                return new StandardSaveStrategy();
             }
         }
 

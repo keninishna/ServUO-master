@@ -1,26 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><Database Name="UO" Class="UODataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
   <Connection Mode="AppSettings" ConnectionString="Data Source=localhost;Initial Catalog=UO;Integrated Security=True" SettingsObjectName="Server.Properties.Settings" SettingsPropertyName="UOConnectionString" Provider="System.Data.SqlClient" />
-  <Table Name="dbo.Skills" Member="Skills">
-    <Type Name="Skill">
-      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="Parent" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="Name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="Lock" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
-      <Column Name="Base" Type="System.Double" DbType="Float" CanBeNull="true" />
-      <Column Name="Cap" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Association Name="Mobile_Skill" Member="Mobile" ThisKey="Parent" OtherKey="Id" Type="Mobile" IsForeignKey="true" />
-    </Type>
-  </Table>
   <Table Name="dbo.ItemIndex" Member="ItemIndexes">
     <Type Name="ItemIndex">
       <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="ItemTypes" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.MobIndex" Member="MobIndexes">
-    <Type Name="MobIndex">
-      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="MobTypes" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
     </Type>
   </Table>
   <Table Name="dbo.Items" Member="Items">
@@ -151,6 +134,23 @@
       <Column Name="Data" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
       <Association Name="Mobile_Item" Member="Items" ThisKey="Id" OtherKey="m_Parent" Type="Item" />
       <Association Name="Mobile_Skill" Member="Skills" ThisKey="Id" OtherKey="Parent" Type="Skill" />
+    </Type>
+  </Table>
+  <Table Name="dbo.MobIndex" Member="MobIndexes">
+    <Type Name="MobIndex">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="MobTypes" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Skills" Member="Skills">
+    <Type Name="Skill">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Parent" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Lock" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
+      <Column Name="Base" Type="System.Double" DbType="Float" CanBeNull="true" />
+      <Column Name="Cap" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="Mobile_Skill" Member="Mobile" ThisKey="Parent" OtherKey="Id" Type="Mobile" IsForeignKey="true" />
     </Type>
   </Table>
 </Database>

@@ -30,25 +30,25 @@ namespace Database
 		
     #region Extensibility Method Definitions
     partial void OnCreated();
-    partial void InsertSkill(Skill instance);
-    partial void UpdateSkill(Skill instance);
-    partial void DeleteSkill(Skill instance);
     partial void InsertItemIndex(ItemIndex instance);
     partial void UpdateItemIndex(ItemIndex instance);
     partial void DeleteItemIndex(ItemIndex instance);
-    partial void InsertMobIndex(MobIndex instance);
-    partial void UpdateMobIndex(MobIndex instance);
-    partial void DeleteMobIndex(MobIndex instance);
     partial void InsertItem(Item instance);
     partial void UpdateItem(Item instance);
     partial void DeleteItem(Item instance);
     partial void InsertMobile(Mobile instance);
     partial void UpdateMobile(Mobile instance);
     partial void DeleteMobile(Mobile instance);
+    partial void InsertMobIndex(MobIndex instance);
+    partial void UpdateMobIndex(MobIndex instance);
+    partial void DeleteMobIndex(MobIndex instance);
+    partial void InsertSkill(Skill instance);
+    partial void UpdateSkill(Skill instance);
+    partial void DeleteSkill(Skill instance);
     #endregion
 		
 		public UODataContext() : 
-				base(global::Database.Properties.Settings.Default.UOConnectionString, mappingSource)
+				base(global::Server.Properties.Settings.Default.UOConnectionString, mappingSource)
 		{
 			OnCreated();
 		}
@@ -77,27 +77,11 @@ namespace Database
 			OnCreated();
 		}
 		
-		public System.Data.Linq.Table<Skill> Skills
-		{
-			get
-			{
-				return this.GetTable<Skill>();
-			}
-		}
-		
 		public System.Data.Linq.Table<ItemIndex> ItemIndexes
 		{
 			get
 			{
 				return this.GetTable<ItemIndex>();
-			}
-		}
-		
-		public System.Data.Linq.Table<MobIndex> MobIndexes
-		{
-			get
-			{
-				return this.GetTable<MobIndex>();
 			}
 		}
 		
@@ -116,227 +100,20 @@ namespace Database
 				return this.GetTable<Mobile>();
 			}
 		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Skills")]
-	public partial class Skill : INotifyPropertyChanging, INotifyPropertyChanged
-	{
 		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _Id;
-		
-		private System.Nullable<int> _Parent;
-		
-		private string _Name;
-		
-		private System.Nullable<byte> _Lock;
-		
-		private System.Nullable<double> _Base;
-		
-		private System.Nullable<int> _Cap;
-		
-		private EntityRef<Mobile> _Mobile;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnIdChanging(int value);
-    partial void OnIdChanged();
-    partial void OnParentChanging(System.Nullable<int> value);
-    partial void OnParentChanged();
-    partial void OnNameChanging(string value);
-    partial void OnNameChanged();
-    partial void OnLockChanging(System.Nullable<byte> value);
-    partial void OnLockChanged();
-    partial void OnBaseChanging(System.Nullable<double> value);
-    partial void OnBaseChanged();
-    partial void OnCapChanging(System.Nullable<int> value);
-    partial void OnCapChanged();
-    #endregion
-		
-		public Skill()
-		{
-			this._Mobile = default(EntityRef<Mobile>);
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", DbType="Int NOT NULL", IsPrimaryKey=true)]
-		public int Id
+		public System.Data.Linq.Table<MobIndex> MobIndexes
 		{
 			get
 			{
-				return this._Id;
-			}
-			set
-			{
-				if ((this._Id != value))
-				{
-					this.OnIdChanging(value);
-					this.SendPropertyChanging();
-					this._Id = value;
-					this.SendPropertyChanged("Id");
-					this.OnIdChanged();
-				}
+				return this.GetTable<MobIndex>();
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Parent", DbType="Int")]
-		public System.Nullable<int> Parent
+		public System.Data.Linq.Table<Skill> Skills
 		{
 			get
 			{
-				return this._Parent;
-			}
-			set
-			{
-				if ((this._Parent != value))
-				{
-					if (this._Mobile.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnParentChanging(value);
-					this.SendPropertyChanging();
-					this._Parent = value;
-					this.SendPropertyChanged("Parent");
-					this.OnParentChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="VarChar(50)")]
-		public string Name
-		{
-			get
-			{
-				return this._Name;
-			}
-			set
-			{
-				if ((this._Name != value))
-				{
-					this.OnNameChanging(value);
-					this.SendPropertyChanging();
-					this._Name = value;
-					this.SendPropertyChanged("Name");
-					this.OnNameChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Lock", DbType="TinyInt")]
-		public System.Nullable<byte> Lock
-		{
-			get
-			{
-				return this._Lock;
-			}
-			set
-			{
-				if ((this._Lock != value))
-				{
-					this.OnLockChanging(value);
-					this.SendPropertyChanging();
-					this._Lock = value;
-					this.SendPropertyChanged("Lock");
-					this.OnLockChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Base", DbType="Float")]
-		public System.Nullable<double> Base
-		{
-			get
-			{
-				return this._Base;
-			}
-			set
-			{
-				if ((this._Base != value))
-				{
-					this.OnBaseChanging(value);
-					this.SendPropertyChanging();
-					this._Base = value;
-					this.SendPropertyChanged("Base");
-					this.OnBaseChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Cap", DbType="Int")]
-		public System.Nullable<int> Cap
-		{
-			get
-			{
-				return this._Cap;
-			}
-			set
-			{
-				if ((this._Cap != value))
-				{
-					this.OnCapChanging(value);
-					this.SendPropertyChanging();
-					this._Cap = value;
-					this.SendPropertyChanged("Cap");
-					this.OnCapChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mobile_Skill", Storage="_Mobile", ThisKey="Parent", OtherKey="Id", IsForeignKey=true)]
-		public Mobile Mobile
-		{
-			get
-			{
-				return this._Mobile.Entity;
-			}
-			set
-			{
-				Mobile previousValue = this._Mobile.Entity;
-				if (((previousValue != value) 
-							|| (this._Mobile.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Mobile.Entity = null;
-						previousValue.Skills.Remove(this);
-					}
-					this._Mobile.Entity = value;
-					if ((value != null))
-					{
-						value.Skills.Add(this);
-						this._Parent = value.Id;
-					}
-					else
-					{
-						this._Parent = default(Nullable<int>);
-					}
-					this.SendPropertyChanged("Mobile");
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+				return this.GetTable<Skill>();
 			}
 		}
 	}
@@ -402,92 +179,6 @@ namespace Database
 					this._ItemTypes = value;
 					this.SendPropertyChanged("ItemTypes");
 					this.OnItemTypesChanged();
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.MobIndex")]
-	public partial class MobIndex : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _Id;
-		
-		private string _MobTypes;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnIdChanging(int value);
-    partial void OnIdChanged();
-    partial void OnMobTypesChanging(string value);
-    partial void OnMobTypesChanged();
-    #endregion
-		
-		public MobIndex()
-		{
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", DbType="Int NOT NULL", IsPrimaryKey=true)]
-		public int Id
-		{
-			get
-			{
-				return this._Id;
-			}
-			set
-			{
-				if ((this._Id != value))
-				{
-					this.OnIdChanging(value);
-					this.SendPropertyChanging();
-					this._Id = value;
-					this.SendPropertyChanged("Id");
-					this.OnIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MobTypes", DbType="VarChar(MAX)")]
-		public string MobTypes
-		{
-			get
-			{
-				return this._MobTypes;
-			}
-			set
-			{
-				if ((this._MobTypes != value))
-				{
-					this.OnMobTypesChanging(value);
-					this.SendPropertyChanging();
-					this._MobTypes = value;
-					this.SendPropertyChanged("MobTypes");
-					this.OnMobTypesChanged();
 				}
 			}
 		}
@@ -3539,6 +3230,315 @@ namespace Database
 		{
 			this.SendPropertyChanging();
 			entity.Mobile = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.MobIndex")]
+	public partial class MobIndex : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _Id;
+		
+		private string _MobTypes;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIdChanging(int value);
+    partial void OnIdChanged();
+    partial void OnMobTypesChanging(string value);
+    partial void OnMobTypesChanged();
+    #endregion
+		
+		public MobIndex()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int Id
+		{
+			get
+			{
+				return this._Id;
+			}
+			set
+			{
+				if ((this._Id != value))
+				{
+					this.OnIdChanging(value);
+					this.SendPropertyChanging();
+					this._Id = value;
+					this.SendPropertyChanged("Id");
+					this.OnIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MobTypes", DbType="VarChar(MAX)")]
+		public string MobTypes
+		{
+			get
+			{
+				return this._MobTypes;
+			}
+			set
+			{
+				if ((this._MobTypes != value))
+				{
+					this.OnMobTypesChanging(value);
+					this.SendPropertyChanging();
+					this._MobTypes = value;
+					this.SendPropertyChanged("MobTypes");
+					this.OnMobTypesChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Skills")]
+	public partial class Skill : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _Id;
+		
+		private System.Nullable<int> _Parent;
+		
+		private string _Name;
+		
+		private System.Nullable<byte> _Lock;
+		
+		private System.Nullable<double> _Base;
+		
+		private System.Nullable<int> _Cap;
+		
+		private EntityRef<Mobile> _Mobile;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIdChanging(int value);
+    partial void OnIdChanged();
+    partial void OnParentChanging(System.Nullable<int> value);
+    partial void OnParentChanged();
+    partial void OnNameChanging(string value);
+    partial void OnNameChanged();
+    partial void OnLockChanging(System.Nullable<byte> value);
+    partial void OnLockChanged();
+    partial void OnBaseChanging(System.Nullable<double> value);
+    partial void OnBaseChanged();
+    partial void OnCapChanging(System.Nullable<int> value);
+    partial void OnCapChanged();
+    #endregion
+		
+		public Skill()
+		{
+			this._Mobile = default(EntityRef<Mobile>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int Id
+		{
+			get
+			{
+				return this._Id;
+			}
+			set
+			{
+				if ((this._Id != value))
+				{
+					this.OnIdChanging(value);
+					this.SendPropertyChanging();
+					this._Id = value;
+					this.SendPropertyChanged("Id");
+					this.OnIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Parent", DbType="Int")]
+		public System.Nullable<int> Parent
+		{
+			get
+			{
+				return this._Parent;
+			}
+			set
+			{
+				if ((this._Parent != value))
+				{
+					if (this._Mobile.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnParentChanging(value);
+					this.SendPropertyChanging();
+					this._Parent = value;
+					this.SendPropertyChanged("Parent");
+					this.OnParentChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="VarChar(50)")]
+		public string Name
+		{
+			get
+			{
+				return this._Name;
+			}
+			set
+			{
+				if ((this._Name != value))
+				{
+					this.OnNameChanging(value);
+					this.SendPropertyChanging();
+					this._Name = value;
+					this.SendPropertyChanged("Name");
+					this.OnNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Lock", DbType="TinyInt")]
+		public System.Nullable<byte> Lock
+		{
+			get
+			{
+				return this._Lock;
+			}
+			set
+			{
+				if ((this._Lock != value))
+				{
+					this.OnLockChanging(value);
+					this.SendPropertyChanging();
+					this._Lock = value;
+					this.SendPropertyChanged("Lock");
+					this.OnLockChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Base", DbType="Float")]
+		public System.Nullable<double> Base
+		{
+			get
+			{
+				return this._Base;
+			}
+			set
+			{
+				if ((this._Base != value))
+				{
+					this.OnBaseChanging(value);
+					this.SendPropertyChanging();
+					this._Base = value;
+					this.SendPropertyChanged("Base");
+					this.OnBaseChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Cap", DbType="Int")]
+		public System.Nullable<int> Cap
+		{
+			get
+			{
+				return this._Cap;
+			}
+			set
+			{
+				if ((this._Cap != value))
+				{
+					this.OnCapChanging(value);
+					this.SendPropertyChanging();
+					this._Cap = value;
+					this.SendPropertyChanged("Cap");
+					this.OnCapChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mobile_Skill", Storage="_Mobile", ThisKey="Parent", OtherKey="Id", IsForeignKey=true)]
+		public Mobile Mobile
+		{
+			get
+			{
+				return this._Mobile.Entity;
+			}
+			set
+			{
+				Mobile previousValue = this._Mobile.Entity;
+				if (((previousValue != value) 
+							|| (this._Mobile.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Mobile.Entity = null;
+						previousValue.Skills.Remove(this);
+					}
+					this._Mobile.Entity = value;
+					if ((value != null))
+					{
+						value.Skills.Add(this);
+						this._Parent = value.Id;
+					}
+					else
+					{
+						this._Parent = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("Mobile");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
 		}
 	}
 }

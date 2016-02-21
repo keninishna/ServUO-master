@@ -30,6 +30,7 @@ namespace Server
 		public abstract decimal ReadDecimal();
 		public abstract long ReadLong();
 		public abstract ulong ReadULong();
+		public abstract int PeekInt();
 		public abstract int ReadInt();
 		public abstract uint ReadUInt();
 		public abstract short ReadShort();
@@ -229,15 +230,7 @@ namespace Server
 			m_Encoding = Utility.UTF8WithEncoding;
 		}
 
-        public BinaryFileWriter(MemoryStream strim, bool prefixStr)
-        {
-            PrefixStrings = prefixStr;
-            m_Buffer = new byte[BufferSize];
-            m_File = strim;
-            m_Encoding = Utility.UTF8WithEncoding;
-        }
-
-        public void Flush()
+		public void Flush()
 		{
 			if (m_Index > 0)
 			{
@@ -1355,6 +1348,24 @@ namespace Server
 		public override ulong ReadULong()
 		{
 			return m_File.ReadUInt64();
+		}
+
+		public override int PeekInt()
+		{
+			int value = 0;
+			long returnTo = m_File.BaseStream.Position;
+
+			try
+			{
+				value = m_File.ReadInt32();
+			}
+			catch(EndOfStreamException)
+			{
+				// Ignore this exception, the defalut value 0 will be returned
+			}
+
+			m_File.BaseStream.Seek(returnTo, SeekOrigin.Begin);
+			return value;
 		}
 
 		public override int ReadInt()

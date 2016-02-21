@@ -14,10 +14,11 @@ namespace Server.Misc
 
                 if (Console.ReadKey(true).Key == ConsoleKey.Y)
                 {
-                    Console.WriteLine("/n");
+                    Console.WriteLine();
 
                     Console.Write("Username: ");
                     string username = Console.ReadLine();
+
                     Console.Write("Password: ");
                     string password = Console.ReadLine();
 

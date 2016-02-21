@@ -392,7 +392,7 @@ namespace Server.Items
 
 				double healing = m_Healer.Skills[primarySkill].Value;
 				double anatomy = m_Healer.Skills[secondarySkill].Value;
-				double chance = ((healing - 30.0) / 50.0) - (m_Patient.Poison.Level * 0.1) - (m_Slips * 0.02);
+				double chance = ((healing - 30.0) / 50.0) - (m_Patient.Poison.RealLevel * 0.1) - (m_Slips * 0.02);
 
 				if ((checkSkills = (healing >= 60.0 && anatomy >= 60.0)) && chance > Utility.RandomDouble())
 				{
@@ -577,12 +577,8 @@ namespace Server.Items
 				{
 					if (Core.AOS)
 					{
-						seconds = 5.0 + (0.5 * ((double)(120 - dex) / 10)); // TODO: Verify algorithm
-
-						if (seconds > 8.0)
-						{
-							seconds = 8.0;
-						}
+						seconds = Math.Ceiling((double)11 - healer.Dex / 20);
+						seconds = Math.Max(seconds, 4);
 					}
 					else
 					{
@@ -597,14 +593,8 @@ namespace Server.Items
 					}
 					else if (Core.AOS)
 					{
-						if (dex < 204)
-						{
-							seconds = 3.2 - (Math.Sin((double)dex / 130) * 2.5) + resDelay;
-						}
-						else
-						{
-							seconds = 0.7 + resDelay;
-						}
+						seconds = Math.Ceiling((double)4 - healer.Dex / 60);
+						seconds = Math.Max(seconds, 2);
 					}
 					else
 					{

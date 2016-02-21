@@ -14,9 +14,9 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;ServUO</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NEWTIMERS;ServUO</DefineConstants>
     <WarningLevel>4</WarningLevel>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <Prefer32Bit>false</Prefer32Bit>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -25,7 +25,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>Output\</OutputPath>
-    <DefineConstants>TRACE;ServUO</DefineConstants>
+    <DefineConstants>TRACE;NEWTIMERS;ServUO</DefineConstants>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
@@ -36,14 +36,10 @@
     <RootNamespace>Server</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Db4objects.Db4o">
-      <HintPath>..\Db4objects.Db4o.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data.Linq" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
@@ -105,9 +101,6 @@
     <Compile Include="Commands\DecorateMag.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Commands\DecorateML.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Commands\DecorateSA.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -124,9 +117,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Commands\GenCategorization.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Commands\GenChampion.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Commands\Generic\Commands\BaseCommand.cs">
@@ -225,9 +215,6 @@
     <Compile Include="Commands\Logging.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Commands\MoonGenDelete.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Commands\Profiling.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -256,9 +243,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Commands\Statics.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Commands\TelGenDelete.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Commands\TimeStamp.cs">
@@ -1329,6 +1313,7 @@
     <Compile Include="Items\- Misc\Teleporter.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Items\- Misc\TeleportRope.cs" />
     <Compile Include="Items\- Misc\TenMurdererKillRemoverDeed.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1509,9 +1494,11 @@
     <Compile Include="Items\Addons\ElvenWashbasinEastAddon.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Items\Addons\ElvenWashbasinEastAddonWithDrawer.cs" />
     <Compile Include="Items\Addons\ElvenWashbasinSouthAddon.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Items\Addons\ElvenWashbasinSouthAddonWithDrawer.cs" />
     <Compile Include="Items\Addons\FancyElvenTableEastAddon.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -4974,9 +4961,6 @@
     <Compile Include="Items\Special\Bulk Order Rewards\Blacksmithy\PowderOfTemperament.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Items\Special\Community Collection\JesterHatofChuckles.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Items\Special\Evil Home Decor Collection\AwesomeDisturbingPortrait.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -6872,9 +6856,7 @@
     <Compile Include="Misc\MapDefinitions.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Misc\MondainsLegacy.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Misc\MondainsLegacy.cs" />
     <Compile Include="Misc\NameList.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -6938,15 +6920,10 @@
     <Compile Include="Misc\TreasureMapProtection.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Misc\uoamVendors.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Misc\ValidationQueue.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Misc\VendorGenerator.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Misc\WeakEntityCollection.cs" />
     <Compile Include="Misc\Weather.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -7548,9 +7525,8 @@
     <Compile Include="Mobiles\Monsters\Ants\BlackSolenWorker.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mobiles\Monsters\Ants\FireAnt.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Mobiles\Monsters\Ants\Fire Ant\FireAnt.cs" />
+    <Compile Include="Mobiles\Monsters\Ants\Fire Ant\HotGoo.cs" />
     <Compile Include="Mobiles\Monsters\Ants\RedSolenInfiltratorQueen.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -9410,6 +9386,7 @@
     <Compile Include="Multis\Camps\OrcCamp.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Multis\Camps\PrisonerCamp.cs" />
     <Compile Include="Multis\Camps\RatCamp.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -10969,12 +10946,11 @@
     <Compile Include="Services\ChampionSystem\ChampionSpawnController\ChampionSpawnController.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Services\ChampionSystem\ChampionSpawnController\RandomizeTimer.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Services\ChampionSystem\ChampionSpawnType.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Services\ChampionSystem\ChampionSystem.cs" />
+    <Compile Include="Services\ChampionSystem\GoldShower.cs" />
     <Compile Include="Services\ChampionSystem\HarrowerGate.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -11035,6 +11011,7 @@
     <Compile Include="Services\Community Collections\CollectionItem.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Services\Community Collections\CollectionsSystem.cs" />
     <Compile Include="Services\Community Collections\ComunityCollectionGump.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -11700,6 +11677,7 @@
     <Compile Include="Services\Help\HelpGump.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Services\Help\HelpPersistence.cs" />
     <Compile Include="Services\Help\PagePrompt.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -11817,6 +11795,8 @@
     <Compile Include="Services\Khaldun\RaiseSwitch.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Services\Loyalty System\LoyaltyRating.cs" />
+    <Compile Include="Services\Loyalty System\LoyaltyRatingGump.cs" />
     <Compile Include="Services\MyRunUO\Config.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -12001,13 +11981,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Services\Plants\SetToDecorativeGump.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Services\Queens Loyalty\ContextMenuEntry.cs" />
-    <Compile Include="Services\Queens Loyalty\LoyaltySystem.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Services\Queens Loyalty\PointsEntry.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Services\Quests\Core\BaseQuester.cs">
@@ -12475,25 +12448,7 @@
     <Compile Include="Services\Runic Reforging\RunicReforging.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Services\ShardControl\BaseSettings.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Services\ShardControl\MainSettings.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Services\ShardControl\Settings\AccountSettings.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Services\ShardControl\Settings\ClientSettings.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Services\ShardControl\Settings\GeneralSettings.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Services\ShardControl\Settings\SaveSettings.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Services\ShardControl\ShardControlCore.cs" />
+    <Compile Include="Services\SA Content\SARegionDrops.cs" />
     <Compile Include="Services\Spawner\ProximitySpawner.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -14132,6 +14087,7 @@
     <Content Include="SpecialSystems\README.TXT" />
     <Content Include="Spells\Mysticism\Blank.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>
     <VisualStudio AllowExistingFolder="true" />

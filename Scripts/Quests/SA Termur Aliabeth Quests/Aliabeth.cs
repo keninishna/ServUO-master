@@ -73,8 +73,12 @@ namespace Server.Engines.Quests
 
         public override void GiveRewards()
         {
-            Server.Engines.QueensLoyalty.LoyaltySystem.HandleQuest(Owner, this);
-            base.GiveRewards();
+            if (Owner is PlayerMobile)
+            {
+                Owner.Exp += 50;
+                Owner.SendMessage("You have been awarded 50 Queens Loyalty Points!");
+                base.GiveRewards();
+            }
         }
 
         public override void Serialize(GenericWriter writer)
@@ -158,8 +162,12 @@ namespace Server.Engines.Quests
 
         public override void GiveRewards()
         {
-            Server.Engines.QueensLoyalty.LoyaltySystem.HandleQuest(Owner, this);
-            base.GiveRewards();
+            if (Owner != null)
+            {
+                Owner.Exp += 35;
+                Owner.SendMessage("You have been awarded 35 Queens Loyalty Points!");
+                base.GiveRewards();
+            }
         }
 
         public override void Serialize(GenericWriter writer)
