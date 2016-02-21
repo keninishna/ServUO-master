@@ -20,6 +20,7 @@ using System.Threading.Tasks;
 using CustomsFramework;
 
 using Server.Network;
+using System.Collections;
 #endregion
 
 namespace Server
@@ -512,8 +513,13 @@ namespace Server
 			Utility.PushColor(ConsoleColor.DarkYellow);
 			Console.WriteLine("RandomImpl: {0} ({1})", RandomImpl.Type.Name, RandomImpl.IsHardwareRNG ? "Hardware" : "Software");
 			Utility.PopColor();
-			
-			while (!ScriptCompiler.Compile(Debug, _Cache))
+
+            Utility.PushColor(ConsoleColor.DarkYellow);
+            Console.WriteLine("Core: Loading config...");
+            Config.Load();
+            Utility.PopColor();
+
+            while (!ScriptCompiler.Compile(Debug, _Cache))
 			{
 				Utility.PushColor(ConsoleColor.Red);
 				Console.WriteLine("Scripts: One or more scripts failed to compile or no script files were found.");

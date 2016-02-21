@@ -931,8 +931,8 @@ namespace Server
 
 			Utility.PushColor(ConsoleColor.Green);
 			Console.WriteLine(
-				"done ({1} items, {2} mobiles, {3} customs) ({0:F2} seconds)",
-				watch.Elapsed.TotalSeconds,
+                "...done ({1} items, {2} mobiles, {3} customs) ({0:F2} seconds)",
+                watch.Elapsed.TotalSeconds,
 				m_Items.Count,
 				m_Mobiles.Count,
 				_Data.Count);

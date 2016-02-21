@@ -2623,7 +2623,7 @@ namespace Server
 			{
 				Item item = m_Items[i];
 
-				//item.UpdateTotals();
+				item.UpdateTotals();
 
 				if (item.IsVirtualItem)
 				{
@@ -9269,8 +9269,18 @@ namespace Server
 		[CommandProperty(AccessLevel.Decorator)]
 		public string RawName { get { return m_Name; } set { Name = value; } }
 
-		[CommandProperty(AccessLevel.Decorator)]
-		public string Name
+
+        [CommandProperty(AccessLevel.Decorator)]
+        public virtual string TitleName
+        {
+            get
+            {
+                return m_Name;
+            }
+        }
+
+        [CommandProperty(AccessLevel.Decorator)]
+        public string Name
 		{
 			get
 			{
