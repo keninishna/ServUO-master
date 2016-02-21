@@ -1,0 +1,150 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Database Name="UO" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Table Name="dbo.Items" Member="Items">
+    <Type Name="Items">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="m_SavedFlags" Member="M_SavedFlags" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
+      <Column Name="LastMoved" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="m_Direction" Member="M_Direction" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
+      <Column Name="map" Member="Map" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
+      <Column Name="parent" Member="Parent" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_LootType" Member="M_LootType" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
+      <Column Name="m_ItemID" Member="M_ItemID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="locx" Member="Locx" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="locy" Member="Locy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="locz" Member="Locz" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_Hue" Member="M_Hue" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_Amount" Member="M_Amount" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_Layer" Member="M_Layer" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
+      <Column Name="m_Name" Member="M_Name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="m_Items" Member="M_Items" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="intweight" Member="Intweight" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="dweight" Member="Dweight" Type="System.Double" DbType="Float" CanBeNull="true" />
+      <Column Name="m_InsuredFor" Member="M_InsuredFor" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_BlessedFor" Member="M_BlessedFor" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Visible" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="Movable" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="Stackable" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="LocationFull" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="worldLocy" Member="WorldLocy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="worldLocz" Member="WorldLocz" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="worldLocx" Member="WorldLocx" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="typeID" Member="TypeID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="serial" Member="Serial" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Mobiles" Member="Mobiles">
+    <Type Name="Mobiles">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="m_SpecialSlayerMechanics" Member="M_SpecialSlayerMechanics" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="m_IgnoreMobiles" Member="M_IgnoreMobiles" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="m_Corpse" Member="M_Corpse" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_CreationTime" Member="M_CreationTime" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="m_CantWalk" Member="M_CantWalk" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="m_MagicDamageAbsorb" Member="M_MagicDamageAbsorb" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_CanSwim" Member="M_CanSwim" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="m_Squelched" Member="M_Squelched" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="m_Holding" Member="M_Holding" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_VirtualArmor" Member="M_VirtualArmor" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_BaseSoundID" Member="M_BaseSoundID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_DisarmReady" Member="M_DisarmReady" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="m_StunReady" Member="M_StunReady" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="Poison" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
+      <Column Name="m_StatCap" Member="M_StatCap" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_NameHue" Member="M_NameHue" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_Body" Member="M_Body" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_Name" Member="M_Name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="m_Criminal" Member="M_Criminal" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="m_SpeechHue" Member="M_SpeechHue" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_EmoteHue" Member="M_EmoteHue" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_WhisperHue" Member="M_WhisperHue" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_YellHue" Member="M_YellHue" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_Language" Member="M_Language" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="m_Warmode" Member="M_Warmode" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="m_Hidden" Member="M_Hidden" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="m_Direction" Member="M_Direction" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
+      <Column Name="m_Hue" Member="M_Hue" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_Str" Member="M_Str" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_Dex" Member="M_Dex" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_Int" Member="M_Int" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_Hits" Member="M_Hits" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_Stam" Member="M_Stam" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_Mana" Member="M_Mana" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_Map" Member="M_Map" Type="System.Data.Linq.Binary" DbType="Binary(50)" CanBeNull="true" />
+      <Column Name="m_Blessed" Member="M_Blessed" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="m_Fame" Member="M_Fame" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_Karma" Member="M_Karma" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_AccessLevel" Member="M_AccessLevel" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
+      <Column Name="m_Items" Member="M_Items" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_Player" Member="M_Player" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="m_AutoPageNotify" Member="M_AutoPageNotify" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="Serial" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_Locationx" Member="M_Locationx" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_Locationy" Member="M_Locationy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_Locationz" Member="M_Locationz" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="mType" Member="MType" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.NPCMobiles" Member="NPCMobiles">
+    <Type Name="NPCMobiles">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="m_Hair" Member="M_Hair" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
+      <Column Name="m_FacialHair" Member="M_FacialHair" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
+      <Column Name="m_Race" Member="M_Race" Type="System.Data.Linq.Binary" DbType="Binary(50)" CanBeNull="true" />
+      <Column Name="m_Thirst" Member="M_Thirst" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_BAC" Member="M_BAC" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_FollowersMax" Member="M_FollowersMax" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_GuildFealty" Member="M_GuildFealty" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_Guild" Member="M_Guild" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_DisplayGuildTitle" Member="M_DisplayGuildTitle" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="m_Hunger" Member="M_Hunger" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_Kills" Member="M_Kills" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_GuildTitle" Member="M_GuildTitle" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="m_Female" Member="M_Female" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="m_AccessLevel" Member="M_AccessLevel" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_Player" Member="M_Player" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="m_Title" Member="M_Title" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="m_Profile" Member="M_Profile" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="m_ProfileLocked" Member="M_ProfileLocked" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="m_Hidden" Member="M_Hidden" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="Serial" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_Stabled" Member="M_Stabled" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.PlayerMobiles" Member="PlayerMobiles">
+    <Type Name="PlayerMobiles">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="m_LastStrGain" Member="M_LastStrGain" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="m_LastIntGain" Member="M_LastIntGain" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="m_LastDexGain" Member="M_LastDexGain" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="m_Hair" Member="M_Hair" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
+      <Column Name="m_FacialHair" Member="M_FacialHair" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
+      <Column Name="m_Race" Member="M_Race" Type="System.Data.Linq.Binary" DbType="Binary(50)" CanBeNull="true" />
+      <Column Name="m_TithingPoints" Member="M_TithingPoints" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_Virtues" Member="M_Virtues" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_Thirst" Member="M_Thirst" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_BAC" Member="M_BAC" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_ShortTermMurders" Member="M_ShortTermMurders" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_FollowersMax" Member="M_FollowersMax" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_GuildFealty" Member="M_GuildFealty" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_Guild" Member="M_Guild" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_DisplayGuildTitle" Member="M_DisplayGuildTitle" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="m_Hunger" Member="M_Hunger" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_Kills" Member="M_Kills" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_GuildTitle" Member="M_GuildTitle" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="m_Female" Member="M_Female" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="m_Player" Member="M_Player" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="m_Title" Member="M_Title" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="m_Profile" Member="M_Profile" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="m_ProfileLocked" Member="M_ProfileLocked" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="m_LogoutLocation" Member="M_LogoutLocation" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_LogoutMap" Member="M_LogoutMap" Type="System.Data.Linq.Binary" DbType="Binary(50)" CanBeNull="true" />
+      <Column Name="m_StrLock" Member="M_StrLock" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
+      <Column Name="m_DexLock" Member="M_DexLock" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
+      <Column Name="m_IntLock" Member="M_IntLock" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
+      <Column Name="m_StuckMenuUses" Member="M_StuckMenuUses" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="m_Hidden" Member="M_Hidden" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="Serial" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+</Database>
