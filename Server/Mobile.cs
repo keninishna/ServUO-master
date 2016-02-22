@@ -5880,12 +5880,16 @@ namespace Server
                 string[] items = v.m_Items.Split(new string[1] { ";" }, StringSplitOptions.RemoveEmptyEntries);
 
                 m_Items = new List<Item>();
-            foreach(string i in items)
-            {
-                int p = 0;
-                Int32.TryParse(i, out p);
-                m_Items.Add(World.FindItem((Serial)p));
+                foreach(string i in items)
+                {
+                    int p = 0;
+                    Int32.TryParse(i, out p);
+                    m_Items.Add(World.FindItem((Serial)p));
+                }
             }
+            else
+            {
+                m_Items = new List<Item>();
             }
             m_Player = (bool)v.m_Player;
                     m_AutoPageNotify = (bool)v.m_AutoPageNotify;
@@ -10425,11 +10429,21 @@ namespace Server
 
 		public Item FindItemOnLayer(Layer layer)
 		{
+            if(m_Items == null)
+            {
+                Console.WriteLine("");
+                return null;
+
+            }
 			var eq = m_Items;
 			int count = eq.Count;
 
 			for (int i = 0; i < count; ++i)
 			{
+                if (eq[i] == null)
+                {
+                    Console.WriteLine("");
+                }
 				Item item = eq[i];
 
 				if (!item.Deleted && item.Layer == layer)

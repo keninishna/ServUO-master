@@ -48,7 +48,7 @@ namespace Server
 		private static DateTime _ProfileStart;
 		private static TimeSpan _ProfileTime;
         public static readonly bool UseSQL = true;
-        public static readonly bool UseSQLLoad = false;
+        public static readonly bool UseSQLLoad = true;
         public static MessagePump MessagePump { get; set; }
 
 		public static Slice Slice;

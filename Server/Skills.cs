@@ -912,6 +912,7 @@ namespace Server
                                 if (isk.Name == v[i].Name)
                                 {
                                     sindex = isk.SkillID;
+                            break;
                                 }
                             }
                     
