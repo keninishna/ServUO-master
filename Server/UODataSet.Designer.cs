@@ -7500,7 +7500,7 @@ namespace Server.UODataSetTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.SqlClient.SqlConnection();
-            this._connection.ConnectionString = global::Server.Properties.Settings.Default.UOConnectionString;
+            this._connection.ConnectionString = global::Database.Properties.Settings.Default.UOConnectionString;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -8127,7 +8127,7 @@ SELECT Id, TypeID, Serial, BounceMap, BounceLocX, BounceLocY, BounceLocZ, Bounce
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.SqlClient.SqlConnection();
-            this._connection.ConnectionString = global::Server.Properties.Settings.Default.UOConnectionString;
+            this._connection.ConnectionString = global::Database.Properties.Settings.Default.UOConnectionString;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -10395,7 +10395,7 @@ SELECT Id, TypeID, Serial, BounceMap, BounceLocX, BounceLocY, BounceLocZ, Bounce
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.SqlClient.SqlConnection();
-            this._connection.ConnectionString = global::Server.Properties.Settings.Default.UOConnectionString;
+            this._connection.ConnectionString = global::Database.Properties.Settings.Default.UOConnectionString;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -13389,7 +13389,7 @@ SELECT Id, TypeID, Serial, BounceMap, BounceLocX, BounceLocY, BounceLocZ, Bounce
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.SqlClient.SqlConnection();
-            this._connection.ConnectionString = global::Server.Properties.Settings.Default.UOConnectionString;
+            this._connection.ConnectionString = global::Database.Properties.Settings.Default.UOConnectionString;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -13726,7 +13726,7 @@ SELECT Id, Parent, Name, Lock, Base, Cap FROM Skills WHERE (Id = @Id)";
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.SqlClient.SqlConnection();
-            this._connection.ConnectionString = global::Server.Properties.Settings.Default.UOConnectionString;
+            this._connection.ConnectionString = global::Database.Properties.Settings.Default.UOConnectionString;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
