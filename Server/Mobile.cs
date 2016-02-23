@@ -5832,7 +5832,7 @@ namespace Server
 		[CommandProperty(AccessLevel.GameMaster)]
 		public bool Squelched { get { return m_Squelched; } set { m_Squelched = value; } }
 
-        public virtual void Deserialize(Database.Mobile v)
+        public virtual void Deserialize(Database.Mobile v, List<Database.Skill> s)
         {
                     
                     //wew lad
@@ -5949,17 +5949,14 @@ namespace Server
             m_SkillMods = new List<SkillMod>();
             m_StuckMenuUses = null; //need to mod the db for this
 
-            using (Database.UODataContext readdb = new Database.UODataContext())
+            List<Database.Skill> sds = new List<Database.Skill>();
+            foreach (Database.Skill a in s)
             {
-                List<Database.Skill> s = new List<Database.Skill>();
-                var dbskills = (from x in readdb.Skills where x.Parent == v.Serial select x); //google no help
-
-                foreach (Database.Skill dbskill in dbskills)
-                {
-                    s.Add(dbskill);
-                }
-                m_Skills = new Skills(this, s); 
+                if (a.Parent == this.Serial.Value) sds.Add(a);
             }
+                m_Skills = new Skills(this, sds);
+                 
+            
 
 
             //m_Account.n = 
@@ -6015,11 +6012,6 @@ namespace Server
             Utility.Intern(ref m_Title);
             Utility.Intern(ref m_Language);
 
-            /* }
-             catch (InvalidCastException e)
-             {
-                // Console.WriteLine = (e);
-             }*/
         }
 
 
@@ -10429,23 +10421,12 @@ namespace Server
 
 		public Item FindItemOnLayer(Layer layer)
 		{
-            if(m_Items == null)
-            {
-                Console.WriteLine("");
-                return null;
-
-            }
 			var eq = m_Items;
 			int count = eq.Count;
 
 			for (int i = 0; i < count; ++i)
 			{
-                if (eq[i] == null)
-                {
-                    Console.WriteLine("");
-                }
 				Item item = eq[i];
-
 				if (!item.Deleted && item.Layer == layer)
 				{
 					return item;

@@ -18,7 +18,8 @@ using Server.Guilds;
 using Server.Network;
 using System.Data.Linq;
 using System.Linq;
-using System.Text;
+using System.Threading.Tasks;
+using System.Drawing;
 #endregion
 
 namespace Server
@@ -28,8 +29,8 @@ namespace Server
 		private static Dictionary<Serial, Mobile> m_Mobiles;
 		private static Dictionary<Serial, Item> m_Items;
 		private static Dictionary<CustomSerial, SaveData> _Data;
-        
-		private static bool m_Loading;
+
+        private static bool m_Loading;
 		private static bool m_Loaded;
 
 		private static bool m_Saving;
@@ -41,8 +42,6 @@ namespace Server
 		public static bool Saving { get { return m_Saving; } }
 		public static bool Loaded { get { return m_Loaded; } }
 		public static bool Loading { get { return m_Loading; } }
-
-
 
 
         public static readonly string MobileIndexPath = Path.Combine("Saves/Mobiles/", "Mobiles.idx");
@@ -109,11 +108,19 @@ namespace Server
 			m_DiskWriteHandle.WaitOne();
 		}
 
-		public static Dictionary<Serial, Mobile> Mobiles { get { return m_Mobiles; } }
+        public static List<Database.Mobile> SQLmobs { get; set; }
+        public static List<Database.Skill> SQLSkills { get; set; }
+        public static List<Database.MobIndex> SQLmindex { get; set; }
+        public static List<Database.Item> SQLitemlist { get; set; }
+        public static List<Database.ItemIndex> SQLitemindex { get; set; }
+
+
+        public static Dictionary<Serial, Mobile> Mobiles { get { return m_Mobiles; } }
 
 		public static Dictionary<Serial, Item> Items { get { return m_Items; } }
 
 		public static Dictionary<CustomSerial, SaveData> Data { get { return _Data; } }
+
 
 		public static bool OnDelete(IEntity entity)
 		{
@@ -939,15 +946,30 @@ namespace Server
 			Utility.PopColor();
 		}
 
-        private static List<Tuple<ConstructorInfo, string>> ReadTypesSQL(List<Database.ItemIndex> mobs)
+        private static List<ItemEntry> ReadItemTypesSQL(int itemCount, List<Database.Item> it)
         {
-            int count = mobs.Count();
+            Stopwatch watch = Stopwatch.StartNew();
+            List<Database.ItemIndex> ittypes = new List<Database.ItemIndex>();
+            using (Database.UODataContext readdb = new Database.UODataContext())
+            {
+                var dbitems = (from x in readdb.ItemIndexes select x); //google no help
+                if (dbitems != null)
+                {
+                    foreach (Database.ItemIndex dbitem in dbitems)
+                    {
+                        ittypes.Add(dbitem);
+                    }
+                }
+            }
+
+
+            int count = ittypes.Count();
             var types = new List<Tuple<ConstructorInfo, string>>(count);
             string typeName = "";
             for (int i = 0; i < count; ++i)
             {
 
-                typeName = ((Database.ItemIndex)mobs[i]).ItemTypes;
+                typeName = ((Database.ItemIndex)ittypes[i]).ItemTypes;
 
                 Type t = ScriptCompiler.FindTypeByFullName(typeName);
 
@@ -992,14 +1014,65 @@ namespace Server
                     throw new Exception(String.Format("Type '{0}' does not have a serialization constructor", t));
                 }
             }
-            return types;
+
+            var ctorArgs = new object[1];
+            List<ItemEntry> items = new List<ItemEntry>();
+
+            for (int i = 0; i < itemCount; ++i)
+            {
+                int typeID = (int)it[i].TypeID;
+                int serial = (int)it[i].Serial;
+
+                var objs = types[typeID];
+
+                if (objs == null)
+                {
+                    continue;
+                }
+
+                Item item = null;
+                ConstructorInfo ctor = objs.Item1;
+                typeName = objs.Item2;
+
+                try
+                {
+                    ctorArgs[0] = (Serial)serial;
+                    item = (Item)(ctor.Invoke(ctorArgs));
+                }
+                catch
+                { }
+
+                if (item != null)
+                {
+                    items.Add(new ItemEntry(item, typeID, typeName, 0, 0));
+                    AddItem(item);
+
+                }
+
+            }
+            watch.Stop();
+            Console.WriteLine("LoadItemTypes: " + watch.Elapsed.TotalSeconds);
+            return items;
         }
 
-        private static List<Tuple<ConstructorInfo, string>> ReadTypesSQL(List<Database.MobIndex> mobs)
+        private static List<MobileEntry> ReadMobTypesSQL(int mobileCount, List<Database.Mobile> v)
         {
+            Stopwatch watch = Stopwatch.StartNew();
+            List<Database.MobIndex> mobs = new List<Database.MobIndex>();
+            using (Database.UODataContext readdb = new Database.UODataContext())
+            {
+                var mobindex = (from x in readdb.MobIndexes select x); //google no help
+
+                foreach (Database.MobIndex mob in mobindex)
+                {
+                    mobs.Add(mob);
+                }
+            }
+
             int count = mobs.Count();
             var types = new List<Tuple<ConstructorInfo, string>>(count);
             string typeName = "";
+
             for (int i = 0; i < count; ++i)
             {
 
@@ -1048,10 +1121,236 @@ namespace Server
                     throw new Exception(String.Format("Type '{0}' does not have a serialization constructor", t));
                 }
             }
-            return types;
+
+            
+            var ctorArgs = new object[1];
+            var mobiles = new List<MobileEntry>();
+
+            for (int i = 0; i < mobileCount; ++i)
+            {
+                int typeID = (int)v[i].mTypeRef;
+                int serial = (int)v[i].Serial;
+                int pos = 0;
+                int length = 0;
+
+                var objs = types[typeID];
+
+                if (objs == null)
+                {
+                    continue;
+                }
+
+                Mobile m = null;
+                ConstructorInfo ctor = objs.Item1;
+                typeName = objs.Item2;
+
+                try
+                {
+                    ctorArgs[0] = (Serial)serial;
+                    m = (Mobile)(ctor.Invoke(ctorArgs));
+                }
+                catch
+                {
+                }
+
+                if (m != null)
+                {
+                    mobiles.Add(new MobileEntry(m, typeID, typeName, pos, length));
+                    AddMobile(m);
+                }
+            }
+            watch.Stop();
+            Console.WriteLine("LoadMobTypes: " + watch.Elapsed.TotalSeconds);
+            return mobiles;
         }
 
-        public static void LoadSQL()
+        private static List<Database.Mobile> LoadMobsSQL()
+        {
+            Stopwatch watch = Stopwatch.StartNew();
+            List<Database.Mobile> v = new List<Database.Mobile>();
+            using (Database.UODataContext readdb = new Database.UODataContext())
+            {
+                var mobs = (from x in readdb.Mobiles select x); //google no help
+                if (mobs != null)
+                {
+                    foreach (Database.Mobile mob in mobs)
+                    {
+                        v.Add(mob);
+                    }
+                }
+            }
+            watch.Stop();
+            Console.WriteLine("LoadMobs: " + watch.Elapsed.TotalSeconds);
+            return v;
+         }
+
+        private static List<Database.Item> LoadItemsSQL()
+        {
+            List<Database.Item> it = new List<Database.Item>();
+            Stopwatch watch = Stopwatch.StartNew();
+            using (Database.UODataContext readdb = new Database.UODataContext() { CommandTimeout = 30, ObjectTrackingEnabled = false })
+            {
+                var dbitems = (from x in readdb.Items select x); //google no help
+
+                if (dbitems != null)
+                {
+                    foreach (Database.Item dbitem in dbitems)
+                    {
+                        it.Add(dbitem);
+                    }
+                }
+                else
+                {
+                    m_Items = new Dictionary<Serial, Item>();
+                }
+            }
+            watch.Stop();
+            Console.WriteLine("LoadItems: " + watch.Elapsed.TotalSeconds);
+            return it;
+        }
+
+        private static List<Database.Skill> LoadSkillsSQL()
+        {
+            List<Database.Skill> s = new List<Database.Skill>();
+            using (Database.UODataContext readdb = new Database.UODataContext())
+            {
+
+                var dbskills = (from x in readdb.Skills select x); //google no help
+
+                foreach (Database.Skill dbskill in dbskills)
+                {
+                    s.Add(dbskill);
+                }
+            }
+            return s;
+        }
+
+        private static bool ProcessMobiles(List<Database.Mobile> v, List<MobileEntry> mobiles, List<Database.Skill> s)
+        {
+            Stopwatch watch = Stopwatch.StartNew();
+            int threads = 8;
+            int mobileCount = mobiles.Count();
+            int mod = 0;
+
+            int[] group = new int[threads+1];
+            group[0] = 0;
+            //do some maths
+            for (int i = 1; i < threads+1; i++)
+            {
+                group[i] = Math.Abs(mobileCount / threads) * i;
+            }
+            Math.DivRem(mobileCount, threads, out mod);
+            group[threads] = group[threads] + mod; //add remainder to the last thread'
+
+            Parallel.For(0, threads, index =>
+              {
+                  Chunk(v, mobiles, s, group[index], ((group[index + 1])));
+              });
+
+            for(int i =0; i<mobileCount; i++)
+            {
+                MobileEntry entry = mobiles[i];
+                Mobile m = entry.Mobile;
+                m_LoadingType = entry.TypeName;
+                byte[] byteArray = Convert.FromBase64String(v[i].Data);
+                MemoryStream bin = new MemoryStream(byteArray);
+                BinaryFileReader reader = new BinaryFileReader(new BinaryReader(bin));
+                m.Deserialize(reader);
+                bin.Close();
+                reader.Close();
+            }
+
+
+            watch.Stop();
+            Console.WriteLine("ProcessMobs: " + watch.Elapsed.TotalSeconds);
+            return false;
+        }
+
+
+        private static void Chunk(List<Database.Mobile> v, List<MobileEntry> mobiles, List<Database.Skill> s, int start, int end)
+        {
+            for (int i = start; i < end; ++i)
+            {
+                MobileEntry entry = mobiles[i];
+                Mobile m = entry.Mobile;
+
+                m_LoadingType = entry.TypeName;
+                m.Deserialize(v[i], s); //i see said the blind man
+
+            }
+        }
+
+        private static bool ProcessItems(List<Database.Item> it, List<ItemEntry> items)
+        {
+            Stopwatch watch = Stopwatch.StartNew();
+            int itemCount = items.Count();
+            
+
+            for (int i = 0; i < itemCount; ++i)
+            {
+                ItemEntry entry = items[i];
+                Item item = entry.Item;
+
+                byte[] byteArray = Convert.FromBase64String(it[i].strim);
+                MemoryStream bin = new MemoryStream(byteArray);
+                BinaryFileReader reader = new BinaryFileReader(new BinaryReader(bin));
+
+            m_LoadingType = entry.TypeName;
+            item.Deserialize(it[i]);
+            item.Deserialize(reader);
+            }
+            watch.Stop();
+            Console.WriteLine("ProccessItems: " + watch.Elapsed.TotalSeconds);
+            return false;
+        }
+
+/* //trying multithreading i gave up
+private static bool ProcessItems(List<Database.Item> it, List<ItemEntry> items)
+{
+    int threads = 8;
+    List<BinaryFileReader> reader = new List<BinaryFileReader>(threads);
+    List<MemoryStream> bin = new List<MemoryStream>(threads);
+    int itemCount = items.Count();
+    int mod = 0;
+
+    int[] group = new int[threads];
+    group[0] = 0;
+    //do some maths
+    for (int i = 1; i < threads; i++)
+    {
+        group[i] = Math.Abs(itemCount / threads) * i;
+    }
+    Math.DivRem(itemCount, threads, out mod);
+    group[threads - 1] = group[threads - 1] + mod; //add remainder to the last thread'
+    List<ItemEntry> entry = new List<ItemEntry>(threads);
+    List<Item> item = new List<Item>(threads);
+    byte[][] byteArray;
+
+    //fire up some threads
+    Parallel.For(0, threads-1, index =>
+    {
+        for (int i = group[index]; i < group[index+1]; ++i)
+        {
+            entry[index] = items[i];
+            item[index] = entry[index].Item;
+
+            byteArray[] = Convert.FromBase64String(it[i].strim);
+            bin[index] = new MemoryStream(byteArray]);
+            reader[index] = new BinaryFileReader(new BinaryReader(bin[index]));
+
+            m_LoadingType = entry[index].TypeName;
+            item[index].Deserialize(it[i]);
+            item[index].Deserialize(reader[index]);
+        }
+        bin[index].Close();
+        reader[index].Close();
+    });
+
+    return false;
+}
+*/
+
+public static void LoadSQL()
         {
             if (m_Loaded)
             {
@@ -1077,151 +1376,38 @@ namespace Server
             int mobileCount = 0, itemCount = 0, guildCount = 0, dataCount = 0;
 
             var ctorArgs = new object[1];
-
-            var items = new List<ItemEntry>();
-            var mobiles = new List<MobileEntry>();
             var guilds = new List<GuildEntry>();
             var data = new List<DataEntry>();
             List<Database.Mobile> v = new List<Database.Mobile>();
-            List<Database.MobIndex> mindex = new List<Database.MobIndex>();
             List<Database.Item> it = new List<Database.Item>();
+            List<MobileEntry> mobiles = new List<MobileEntry>();
+            List<ItemEntry> items = new List<ItemEntry>();
+            List<Database.Skill> s = new List<Database.Skill>();
 
-            using (Database.UODataContext readdb = new Database.UODataContext())
+            Parallel.Invoke(() =>
             {
-                var mobs = (from x in readdb.Mobiles select x); //google no help
-                if (mobs != null)
-                {
-                    foreach (Database.Mobile mob in mobs)
-                    {
-                        v.Add(mob);
-                    }
-
-                    var mobindex = (from x in readdb.MobIndexes select x); //google no help
-
-                        foreach (Database.MobIndex mob in mobindex)
-                        {
-                            mindex.Add(mob);
-                        }
-
-
-                        mobileCount = mobs.Count();
-
-                    var types = ReadTypesSQL(mindex);
-
-                    m_Mobiles = new Dictionary<Serial, Mobile>(mobileCount);
-
-                    for (int i = 0; i < mobileCount; ++i)
-                    {
-                        int typeID = (int)v[i].mTypeRef;
-                        int serial = (int)v[i].Serial;
-                        int pos = 0;
-                        int length = 0;
-
-                        var objs = types[typeID];
-
-                        if (objs == null)
-                        {
-                            continue;
-                        }
-
-                        Mobile m = null;
-                        ConstructorInfo ctor = objs.Item1;
-                        string typeName = objs.Item2;
-
-                        try
-                        {
-                            ctorArgs[0] = (Serial)serial;
-                            m = (Mobile)(ctor.Invoke(ctorArgs));
-                        }
-                        catch
-                        {
-                        }
-
-                        if (m != null)
-                        {
-                            mobiles.Add(new MobileEntry(m, typeID, typeName, pos, length));
-                            AddMobile(m);
-                        }
-                    }
-                }
-                else
-                {
-                   m_Mobiles = new Dictionary<Serial, Mobile>();
-                }
-            }
-
-            using (Database.UODataContext readdb = new Database.UODataContext())
+                v = LoadMobsSQL();
+            }, () =>
             {
-                var dbitems = (from x in readdb.Items select x); //google no help
+                it = LoadItemsSQL();
+            }, () =>
+            {
+                s = LoadSkillsSQL();
+            });
 
-                if (dbitems != null)
-                {
-                    foreach (Database.Item dbitem in dbitems)
-                    {
-                        it.Add(dbitem);
-                    }
-                }
-                else
-                {
-                    m_Items = new Dictionary<Serial, Item>();
-                }
+            itemCount = it.Count();
+            mobileCount = v.Count();
+            m_Items = new Dictionary<Serial, Item>(itemCount);
+            m_Mobiles = new Dictionary<Serial, Mobile>(mobileCount);
 
-
-                List<Database.ItemIndex> iindex = new List<Database.ItemIndex>();
-                using (Database.UODataContext readdb2 = new Database.UODataContext())
-                {
-                    var dbitems2 = (from x in readdb2.ItemIndexes select x); //google no help
-                    if (dbitems != null)
-                    {
-                        foreach (Database.ItemIndex dbitem2 in dbitems2)
-                        {
-                            iindex.Add(dbitem2);
-                        }
-                    }
-                }
-
-
-
-                itemCount = it.Count();
-                m_Items = new Dictionary<Serial, Item>(itemCount);
-
-                var types = ReadTypesSQL(iindex);
-
-
-                for (int i = 0; i < itemCount; ++i)
-                {
-                    int typeID = (int)it[i].TypeID;
-                    int serial = (int)it[i].Serial;
-
-                    var objs = types[typeID];
-
-                    if (objs == null)
-                    {
-                        continue;
-                    }
-
-                    Item item = null;
-                    ConstructorInfo ctor = objs.Item1;
-                    string typeName = objs.Item2;
-
-                    try
-                    {
-                        ctorArgs[0] = (Serial)serial;
-                        item = (Item)(ctor.Invoke(ctorArgs));
-                    }
-                    catch
-                    { }
-
-                    if (item != null)
-                    {
-                        items.Add(new ItemEntry(item, typeID, typeName, 0, 0));
-                        AddItem(item);
-
-                    }
-
-                }
-
-            }
+            Parallel.Invoke(() =>
+            {
+                items = ReadItemTypesSQL(itemCount, it);
+            }, () =>
+            {
+                mobiles = ReadMobTypesSQL(mobileCount, v);
+            });
+            
 
             if (File.Exists(GuildIndexPath))
             {
@@ -1315,85 +1501,21 @@ namespace Server
                 _Data = new Dictionary<CustomSerial, SaveData>();
             }
 
-            bool failedMobiles = false, failedItems = false, failedGuilds = false, failedData = false;
+            bool failedGuilds = false, failedData = false, failedMobiles = false, failedItems = false;
+
+                failedMobiles = ProcessMobiles(v, mobiles, s);
+
+                 failedItems = ProcessItems(it, items);
+
+
+
+            
             Type failedType = null;
             Serial failedSerial = Serial.Zero;
             CustomSerial failedCustomSerial = CustomSerial.Zero;
             Exception failed = null;
             int failedTypeID = 0;
 
-            for (int i = 0; i < mobiles.Count; ++i)
-            {
-                MobileEntry entry = mobiles[i];
-                Mobile m = entry.Mobile;
-
-                if (m != null)
-                {
-
-                    try
-                    {
-                        byte[] byteArray = Convert.FromBase64String(v[i].Data);
-                        MemoryStream bin = new MemoryStream(byteArray);
-                        BinaryFileReader reader = new BinaryFileReader(new BinaryReader(bin));
-
-                        m_LoadingType = entry.TypeName;
-                        m.Deserialize(v[i]); //i see said the blind man
-                        m.Deserialize(reader);
-                        reader.Close();
-                    }
-                    catch (Exception e)
-                    {
-                        mobiles.RemoveAt(i);
-
-                        failed = e;
-                        failedMobiles = true;
-                        failedType = m.GetType();
-                        failedTypeID = entry.TypeID;
-                        failedSerial = m.Serial;
-
-                        break;
-                    }
-                }
-
-    }
-
-            if (!failedMobiles)
-            {
-                    for (int i = 0; i < items.Count; ++i)
-                    {
-                        ItemEntry entry = items[i];
-                        Item item = entry.Item;
-
-                        if (item != null)
-                        {
-                            try
-                            {
-                            byte[] byteArray = Convert.FromBase64String(it[i].strim);
-                            MemoryStream bin = new MemoryStream(byteArray);
-                            BinaryFileReader reader = new BinaryFileReader(new BinaryReader(bin));
-
-                            m_LoadingType = entry.TypeName;
-                            item.Deserialize(it[i]);
-                            item.Deserialize(reader);
-
-                            reader.Close();
-
-                        }
-                            catch (Exception e)
-                            {
-                                items.RemoveAt(i);
-
-                                failed = e;
-                                failedItems = true;
-                                failedType = item.GetType();
-                                failedTypeID = entry.TypeID;
-                                failedSerial = item.Serial;
-
-                                break;
-                            }
-                        }
-                    }             
-            }
 
             m_LoadingType = null;
 
@@ -1828,13 +1950,13 @@ namespace Server
                 Broadcast(0x35, true, "The world is saving, please wait.");
             }
             Console.WriteLine("Core: Using SQL save strategy");
-            Console.Write("World: Saving...");
+            Console.WriteLine("World: Saving...");
             Stopwatch watch = Stopwatch.StartNew();
             SaveStrategy strategy = SaveStrategy.Acquire();
+
             strategy.Save(null, false);
-
-
-
+            
+           
             try
             {
                 EventSink.InvokeWorldSave(new WorldSaveEventArgs(message));
@@ -1846,6 +1968,7 @@ namespace Server
 
             watch.Stop();
             m_Saving = false;
+
             ProcessSafetyQueues();
 
             strategy.ProcessDecay();
@@ -1856,9 +1979,53 @@ namespace Server
             {
                 Broadcast(0x35, true, "World save complete. The entire process took {0:F1} seconds.", watch.Elapsed.TotalSeconds);
             }
-
+            WriteSQL();
             NetState.Resume();
+            
+        }
 
+        private static void WriteSQL()
+        {
+            Console.WriteLine("SQL db write start");
+            using (Database.UODataContext writedb = new Database.UODataContext())
+            {
+                Database.LinqExtension.Truncate(writedb.Mobiles); //drop mobiles table
+                Database.LinqExtension.Truncate(writedb.Skills); //drop skills table
+                Database.LinqExtension.Truncate(writedb.MobIndexes); //drop mobile index table
+                Database.LinqExtension.Truncate(writedb.ItemIndexes); //drop items table
+                Database.LinqExtension.Truncate(writedb.Items); //drop items table
+                Parallel.Invoke(() =>
+                {
+                    writedb.BulkInsertAll(SQLmobs); //bulk insert mobs
+                    Console.WriteLine("Mobile DB write complete");
+                },  // close first Action
+                () =>
+                {
+                    writedb.BulkInsertAll(SQLSkills); //bulk insert skillz
+                    Console.WriteLine("Skills DB write complete");
+                }, //close second Action
+                () =>
+                {
+                    writedb.BulkInsertAll(SQLmindex);
+                }, //close third Action
+                () =>
+                {
+                    writedb.BulkInsertAll(SQLitemlist); //bulk insert items
+                    Console.WriteLine("Item DB write complete");
+                },
+                () =>
+                {
+                    writedb.BulkInsertAll(SQLitemindex); //bulk insert items
+                }); //close parallel.invoke
+
+            }
+            Console.WriteLine("SQL db save complete");
+            
+            SQLmobs = new List<Database.Mobile>();
+            SQLSkills = new List<Database.Skill>();
+            SQLmindex = new List<Database.MobIndex>();
+            SQLitemlist = new List<Database.Item>();
+            SQLitemindex = new List<Database.ItemIndex>();
         }
 
         public static void Save(bool message, bool permitBackgroundWrite)
@@ -1943,9 +2110,11 @@ namespace Server
 			}
 
 			NetState.Resume();
-		}
+            WriteSQL();
 
-		internal static List<Type> m_ItemTypes = new List<Type>();
+        }
+
+        internal static List<Type> m_ItemTypes = new List<Type>();
 		internal static List<Type> m_MobileTypes = new List<Type>();
 		internal static List<Type> _DataTypes = new List<Type>();
 

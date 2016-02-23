@@ -5,6 +5,10 @@ using Server.Guilds;
 using System.IO;
 using System.Data.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Drawing;
+
 
 namespace Server
 {
@@ -46,13 +50,21 @@ namespace Server
 
         public override void Save(SaveMetrics metrics, bool permitBackgroundWrite)
         {
-
-            this.SaveMobiles();
-            this.SaveItemsSQL();
+            Console.WriteLine("");
+            Parallel.Invoke(() =>
+            {
+                this.SaveMobiles();
+            }, () =>
+            {
+                this.SaveItemsSQL();
+            }, () =>
+            {
+                this.SaveGuilds();
+            }, () =>
+            {
+                this.SaveData();
+            });
             //this.SaveItems();
-            this.SaveGuilds();
-            this.SaveData();
-
 
         }
 
@@ -77,14 +89,14 @@ namespace Server
             List<Database.Skill> vsk = new List<Database.Skill>();
             List<Database.MobIndex> mindex = new List<Database.MobIndex>();
             int skillid = 0;
-
+            //Parallel.ForEach(mobiles.Values, (m) =>
             foreach (Mobile m in mobiles.Values)
             {
                 var typename = m.GetType();
 
                 Database.Mobile v = new Database.Mobile();
 
-                for(int i =0; i< m.Skills.Length; i++)
+                for (int i = 0; i < m.Skills.Length; i++)
                 {
                     if (m.Skills[i] != null && m.Skills[i].Base != 0)
                     {
@@ -92,7 +104,7 @@ namespace Server
                         Database.Skill vskill = new Database.Skill();
                         skillid++;
                         vskill.Id = skillid;
-                        vskill.Base = ((double)m.Skills[i].Base)*10;
+                        vskill.Base = ((double)m.Skills[i].Base) * 10;
                         vskill.Cap = (int)m.Skills[i].Cap;
                         vskill.Lock = (byte)m.Skills[i].Lock;
                         vskill.Name = m.Skills[i].Name;
@@ -102,7 +114,7 @@ namespace Server
                 }
 
 
-                foreach(Item mitem in m.Items)
+                foreach (Item mitem in m.Items)
                 {
                     v.m_Items += mitem.Serial.Value + ";";
                 }
@@ -120,7 +132,7 @@ namespace Server
                 v.m_Body = m.Body;
                 v.m_CanSwim = m.CanSwim;
                 v.m_CantWalk = m.CantWalk;
-                if(m.Corpse != null)
+                if (m.Corpse != null)
                 {
                     v.m_Corpse = m.Corpse.Serial.Value;
                 }
@@ -161,9 +173,9 @@ namespace Server
                 v.m_Warmode = m.Warmode;
                 v.m_WhisperHue = m.WhisperHue;
                 v.m_YellHue = m.YellHue;
-                    // v.Poison = (byte)m.Poison;
+                // v.Poison = (byte)m.Poison;
 
-                    //-------------------------
+                //-------------------------
                 if (m.Player)
                 {
                     v.Account = m.Account.Username;
@@ -175,7 +187,8 @@ namespace Server
                 v.m_BAC = m.BAC;
                 v.m_BaseSoundID = m.BaseSoundID;
                 v.m_Blessed = m.Blessed;
-                if(m.LastDexGain < DateTime.UtcNow){
+                if (m.LastDexGain < DateTime.UtcNow)
+                {
                     v.m_LastDexGain = DateTime.UtcNow;
                 }
                 else
@@ -203,14 +216,15 @@ namespace Server
                 v.m_Race = (byte)m.Race.RaceIndex;
                 v.m_ShortTermMurders = m.ShortTermMurders;
                 v.m_FollowersMax = m.FollowersMax;
-                if(m.GuildFealty != null) {
+                if (m.GuildFealty != null)
+                {
                     v.m_GuildFealty = m.GuildFealty.Serial.Value;
                 }
-                    if(m.Guild != null)
+                if (m.Guild != null)
                 {
                     v.m_Guild = m.Guild.Id;
                 }
-                   
+
                 v.m_DisplayGuildTitle = m.DisplayGuildTitle;
                 v.m_Hunger = m.Hunger;
                 v.m_Kills = m.Kills;
@@ -223,7 +237,11 @@ namespace Server
                 v.m_LogoutLocationx = m.LogoutLocation.X;
                 v.m_LogoutLocationy = m.LogoutLocation.Y;
                 v.m_LogoutLocationz = m.LogoutLocation.Z;
-                if (m.LogoutMap != null) { v.m_LogoutMap = (byte)m.LogoutMap.MapIndex; } else
+                if (m.LogoutMap != null)
+                {
+                    v.m_LogoutMap = (byte)m.LogoutMap.MapIndex;
+                }
+                else
                 {
                     v.m_LogoutMap = (byte)(0xFF);
                 }
@@ -237,7 +255,7 @@ namespace Server
                 m.Serialize(bin);
                 bin.Close();
                 v.Data = Convert.ToBase64String(strim.ToArray());
-
+                strim.Close();
                 mobs.Add(v);
                 m.FreeCache();
             }
@@ -252,17 +270,11 @@ namespace Server
                 mindex.Add(a);
             }
 
-            using (Database.UODataContext writedb = new Database.UODataContext())
-            {
-               Database.LinqExtension.Truncate(writedb.Mobiles); //drop mobiles table
-               Database.LinqExtension.Truncate(writedb.Skills); //drop skills table
-                Database.LinqExtension.Truncate(writedb.MobIndexes); //drop skills table
-                writedb.BulkInsertAll(mobs); //bulk insert mobs
-               writedb.BulkInsertAll(vsk); //bulk insert skillz
-                writedb.BulkInsertAll(mindex);
-            }
+            World.SQLmindex = mindex;
+            World.SQLmobs = mobs;
+            World.SQLSkills = vsk;
 
-
+            Console.WriteLine("created mobile save data..");
         }
 
 
@@ -323,8 +335,8 @@ namespace Server
             List<Database.Item> itemlist = new List<Database.Item>();
             List<Database.ItemIndex> itemindex = new List<Database.ItemIndex>();
 
-
-            foreach (Item item in items.Values)
+           // Parallel.ForEach(items.Values, (item) =>
+           foreach(Item item in items.Values)
             {
 
                 MemoryStream strim = new MemoryStream();
@@ -343,16 +355,11 @@ namespace Server
                 item.Serialize(bin);
                 bin.Close();
                 t.strim = Convert.ToBase64String(strim.ToArray());
+                strim.Close();
                 itemlist.Add(t);
                 item.FreeCache();
             }
-            using (Database.UODataContext writedb = new Database.UODataContext())
-            {
-                Database.LinqExtension.Truncate(writedb.Items); //drop items table
-                writedb.BulkInsertAll(itemlist); //bulk insert items
-            }
-
-
+           
             for (int i = 0; i < World.m_ItemTypes.Count; ++i)
             {
                 Database.ItemIndex a = new Database.ItemIndex();
@@ -363,12 +370,9 @@ namespace Server
                 itemindex.Add(a);
             }
 
-            using (Database.UODataContext writedb = new Database.UODataContext())
-            {
-                Database.LinqExtension.Truncate(writedb.ItemIndexes); //drop items table
-                writedb.BulkInsertAll(itemindex); //bulk insert items
-            }
-
+            World.SQLitemindex = itemindex;
+            World.SQLitemlist = itemlist;
+            Console.WriteLine("SQL Item data created..");
         }
     
 
