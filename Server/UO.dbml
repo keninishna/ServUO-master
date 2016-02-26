@@ -6,48 +6,6 @@
       <Column Name="ItemTypes" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
     </Type>
   </Table>
-  <Table Name="dbo.Items" Member="Items">
-    <Type Name="Item">
-      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="TypeID" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="Serial" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="BounceMap" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
-      <Column Name="BounceLocX" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="BounceLocY" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="BounceLocZ" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="BounceWLocX" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="BounceWLocY" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="BounceWLocZ" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="BounceParentSerial" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="BounceParentType" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-      <Column Name="m_LootType" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
-      <Column Name="LocX" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="LocY" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="LocZ" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="ItemID" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="m_Hue" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="m_Amount" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="m_Layer" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
-      <Column Name="m_Name" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
-      <Column Name="m_Parent" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="ParentType" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-      <Column Name="m_Items" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
-      <Column Name="m_Weight" Type="System.Double" DbType="Float" CanBeNull="true" />
-      <Column Name="m_Map" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
-      <Column Name="m_BlessedFor" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="m_HeldBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="m_SavedFlags" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="m_Description" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
-      <Column Name="m_Direction" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
-      <Column Name="flags" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="m_Visible" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-      <Column Name="m_Movable" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-      <Column Name="m_Stackable" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-      <Column Name="m_ImplFlags" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="strim" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
-      <Association Name="Mobile_Item" Member="Mobile" ThisKey="m_Parent" OtherKey="Id" Type="Mobile" IsForeignKey="true" />
-    </Type>
-  </Table>
   <Table Name="dbo.Mobiles" Member="Mobiles">
     <Type Name="Mobile">
       <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
@@ -132,8 +90,8 @@
       <Column Name="m_LogoutLocationz" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="m_Stabled" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="Data" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
-      <Association Name="Mobile_Item" Member="Items" ThisKey="Id" OtherKey="m_Parent" Type="Item" />
       <Association Name="Mobile_Skill" Member="Skills" ThisKey="Id" OtherKey="Parent" Type="Skill" />
+      <Association Name="Mobile_Item" Member="Items" ThisKey="Id" OtherKey="m_Parent" Type="Item" />
     </Type>
   </Table>
   <Table Name="dbo.MobIndex" Member="MobIndexes">
@@ -151,6 +109,95 @@
       <Column Name="Base" Type="System.Double" DbType="Float" CanBeNull="true" />
       <Column Name="Cap" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Association Name="Mobile_Skill" Member="Mobile" ThisKey="Parent" OtherKey="Id" Type="Mobile" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Guilds" Member="Guilds">
+    <Type Name="Guild">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="m_TypeLastChange" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="m_Type" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_LastFealty" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="m_Leader" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_Name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="m_Abbreviation" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="m_Members" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+      <Column Name="m_Candidates" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+      <Column Name="m_Accepted" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+      <Column Name="m_Guildstone" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_Teleporter" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_Charter" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+      <Column Name="m_Website" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+      <Column Name="m_AllyDeclarations" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+      <Column Name="m_AllyInvitations" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+      <Column Name="m_Allies" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+      <Column Name="m_Enemies" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+      <Column Name="m_WarDeclarations" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+      <Column Name="m_WarInvitations" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+      <Column Name="m_AllianceLeader" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.GuildAlliances" Member="GuildAlliances">
+    <Type Name="GuildAlliance">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="m_Name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="m_Leader" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_Members" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+      <Column Name="m_PendingMembers" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.GuildWars" Member="GuildWars">
+    <Type Name="GuildWar">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="m_PendingWars" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="m_Kills" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_MaxKills" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_WarLength" Type="System.DateTimeOffset" DbType="DateTimeOffset" CanBeNull="true" />
+      <Column Name="m_WarBeginning" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="m_Guild" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_Opponent" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_WarRequester" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Items" Member="Items">
+    <Type Name="Item">
+      <Column Name="Id" Type="System.Int64" DbType="BigInt NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="TypeID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Serial" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="BounceMap" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
+      <Column Name="BounceLocX" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="BounceLocY" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="BounceLocZ" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="BounceWLocX" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="BounceWLocY" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="BounceWLocZ" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="BounceParentSerial" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="BounceParentType" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="m_LootType" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
+      <Column Name="LocX" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LocY" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LocZ" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ItemID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_Hue" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_Amount" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_Layer" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
+      <Column Name="m_Name" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+      <Column Name="m_Parent" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ParentType" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="m_Items" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+      <Column Name="m_Weight" Type="System.Double" DbType="Float" CanBeNull="true" />
+      <Column Name="m_Map" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
+      <Column Name="m_BlessedFor" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_HeldBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_SavedFlags" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_Description" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+      <Column Name="m_Direction" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
+      <Column Name="flags" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="m_Visible" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="m_Movable" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="m_Stackable" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="m_ImplFlags" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="strim" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+      <Association Name="Mobile_Item" Member="Mobile" ThisKey="m_Parent" OtherKey="Id" Type="Mobile" IsForeignKey="true" />
     </Type>
   </Table>
 </Database>

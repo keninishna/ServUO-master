@@ -201,7 +201,45 @@ namespace Server.Guilds
 			}
 		}
 
-		public AllianceInfo(GenericReader reader)
+        private string WriteGuildList(List<Guild> list)
+        {
+            string glist = "";
+            for (int i = 0; i < list.Count;)
+            {
+                if (list[i].Disbanded)
+                {
+                    list.RemoveAt(i);
+                }
+                else
+                {
+                    ++i;
+                }
+            }
+
+            foreach (Guild g in list)
+            {
+                glist += g.Id + ";";
+            }
+            return glist;
+        }
+
+        public Database.GuildAlliance Serialize(Database.GuildAlliance g)
+        {
+
+            g.m_Name = m_Name;
+            g.m_Leader = m_Leader.Id;
+
+            g.m_Members = WriteGuildList(m_Members);
+            g.m_PendingMembers = WriteGuildList(m_PendingMembers);
+
+            if (!m_Alliances.ContainsKey(m_Name.ToLower()))
+            {
+                m_Alliances.Add(m_Name.ToLower(), this);
+            }
+            return g;
+        }
+
+        public AllianceInfo(GenericReader reader)
 		{
 			int version = reader.ReadInt();
 
@@ -541,7 +579,23 @@ namespace Server.Guilds
 			}
 		}
 
-		public void Serialize(GenericWriter writer)
+        public Database.GuildWar Serialize(Database.GuildWar g)
+        {
+
+            g.m_Kills = m_Kills;
+            g.m_MaxKills = m_MaxKills;
+
+            //g.m_WarLength = m_WarLength; //need to figure this out
+            g.m_WarBeginning =m_WarBeginning;
+
+            g.m_Guild = m_Guild.Id;
+            g.m_Opponent = m_Opponent.Id;
+
+            g.m_WarRequester = m_WarRequester;
+            return g;
+        }
+
+        public void Serialize(GenericWriter writer)
 		{
 			writer.Write(0); //version
 
@@ -1343,10 +1397,148 @@ namespace Server.Guilds
 
 			return m_Enemies.Contains(g);
 		}
-		#endregion
+        #endregion
 
-		#region Serialization
-		public override void Serialize(GenericWriter writer)
+        #region Serialization
+        private string WriteGuildList(List<Guild> list)
+        {
+            string glist = "";
+            for (int i = 0; i < list.Count;)
+            {
+                if (list[i].Disbanded)
+                {
+                    list.RemoveAt(i);
+                }
+                else
+                {
+                    ++i;
+                }
+            }
+
+            foreach (Guild g in list)
+            {
+                glist += g.Id + ";";
+            }
+            return glist;
+        }
+
+        private string WriteMobList(List<Mobile> list)
+        {
+            string glist = "";
+            for (int i = 0; i < list.Count;)
+            {
+                if (list[i].Deleted)
+                {
+                    list.RemoveAt(i);
+                }
+                else
+                {
+                    ++i;
+                }
+            }
+
+            foreach (Mobile m in list)
+            {
+                glist += m.Serial.Value + ";";
+            }
+            return glist;
+        }
+
+
+        public override List<Database.GuildWar> Serialize(List<Database.GuildWar> g)
+        {
+            CheckExpiredWars();
+
+            #region War Serialization
+
+            for (int i = 0; i < m_PendingWars.Count; i++)
+            {
+                Database.GuildWar gw = new Database.GuildWar();
+                gw = m_PendingWars[i].Serialize(gw);
+                gw.m_PendingWars = true;
+                g.Add(gw);
+            }
+
+            for (int i = 0; i < m_AcceptedWars.Count; i++)
+            {
+                Database.GuildWar gw = new Database.GuildWar();
+                gw = m_AcceptedWars[i].Serialize(gw);
+                gw.m_PendingWars = false;
+                g.Add(gw);
+            }
+            #endregion
+            return g;
+        }
+        public override Database.GuildAlliance Serialize(Database.GuildAlliance g)
+        {
+            if (Alliance != null)
+            {
+                Alliance.CheckLeader();
+            }
+
+            #region Alliances
+            bool isAllianceLeader = (m_AllianceLeader == null && m_AllianceInfo != null);
+           
+
+            if (isAllianceLeader)
+            {
+                g = m_AllianceInfo.Serialize(g);
+            }
+            else
+            {
+                if(m_AllianceLeader != null) g.m_Leader = m_AllianceLeader.Id;
+            }
+            #endregion
+            return g;
+        }
+
+        public override Database.Guild Serialize(Database.Guild g)
+        {
+            if (LastFealty + TimeSpan.FromDays(1.0) < DateTime.UtcNow)
+            {
+                CalculateGuildmaster();
+            }
+
+            g.m_AllyDeclarations = WriteGuildList(m_AllyDeclarations);
+            g.m_AllyInvitations = WriteGuildList(m_AllyInvitations);
+
+            if(m_TypeLastChange.Ticks == 0)
+            {
+                g.m_TypeLastChange = DateTime.UtcNow;
+            }
+            else
+            {
+                g.m_TypeLastChange = m_TypeLastChange;
+            }
+
+
+            g.m_Type = (int)m_Type;
+
+
+            g.m_LastFealty = m_LastFealty;
+
+            g.m_Leader = m_Leader.Serial.Value;
+            g.m_Name = m_Name;
+            g.m_Abbreviation = m_Abbreviation;
+
+            g.m_Allies = WriteGuildList(m_Allies);
+            g.m_Enemies = WriteGuildList(m_Enemies);
+            g.m_WarDeclarations = WriteGuildList(m_WarDeclarations);
+            g.m_WarInvitations = WriteGuildList(m_WarInvitations);
+
+            g.m_Members = WriteMobList(m_Members);
+            g.m_Candidates = WriteMobList(m_Candidates);
+            g.m_Accepted = WriteMobList(m_Accepted);
+
+            if(m_Guildstone != null) g.m_Guildstone = m_Guildstone.Serial.Value;
+            if(m_Teleporter != null) g.m_Teleporter = m_Teleporter.Serial.Value;
+
+            g.m_Charter = m_Charter;
+            g.m_Website = m_Website;
+            return g;
+        }
+
+        public override void Serialize(GenericWriter writer)
 		{
 			if (LastFealty + TimeSpan.FromDays(1.0) < DateTime.UtcNow)
 			{
@@ -1423,7 +1615,142 @@ namespace Server.Guilds
 			writer.Write(m_Website);
 		}
 
-		public override void Deserialize(GenericReader reader)
+        private List<Guild> ReadStrongGuildList(string glist)
+        {
+            List<Guild> g = new List<Guild>();
+
+            string[] itemlist = (glist).Split(new string[1] { ";" }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (string i in itemlist)
+            {
+                int p = 0;
+                Int32.TryParse(i, out p);
+                g.Add(ReadGuild(p));
+            }
+            return g;
+
+        }
+        public Guild ReadGuild(int id)
+        {
+            return Find(id) as Guild;
+        }
+
+        private List<Mobile> ReadStrongMobileList(string mlist)
+        {
+            List<Mobile> g = new List<Mobile>();
+
+            string[] itemlist = (mlist).Split(new string[1] { ";" }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (string i in itemlist)
+            {
+                int p = 0;
+                Int32.TryParse(i, out p);
+                g.Add(Readmob(p));
+            }
+            return g;
+
+        }
+        public Mobile Readmob(int id)
+        {
+            return World.FindMobile(id);
+        }
+
+
+        public override void Deserialize(Database.Guild g)
+        {
+            /* gw, ga
+                        m_PendingWars = new List<WarDeclaration>();
+                        for (int i = 0; i < count; i++)
+                        {
+                            m_PendingWars.Add(new WarDeclaration(reader));
+                        }
+
+                        count = reader.ReadInt();
+                        m_AcceptedWars = new List<WarDeclaration>();
+                        for (int i = 0; i < count; i++)
+                        {
+                            m_AcceptedWars.Add(new WarDeclaration(reader));
+                        }
+
+                        bool isAllianceLeader = reader.ReadBool();
+
+                        if (isAllianceLeader)
+                        {
+                            m_AllianceInfo = new AllianceInfo(reader);
+                        }
+                        else
+                        {
+                            m_AllianceLeader = reader.ReadGuild() as Guild;
+                        }
+                        */
+
+                        m_AllyDeclarations = ReadStrongGuildList(g.m_AllyDeclarations);
+                        m_AllyInvitations = ReadStrongGuildList(g.m_AllyInvitations);
+
+
+                        m_TypeLastChange = (DateTime)g.m_TypeLastChange;
+
+
+                        m_Type = (GuildType)g.m_Type;
+
+
+                        m_LastFealty = (DateTime)g.m_LastFealty;
+
+
+                        m_Leader = (World.FindMobile((int)g.m_Leader));
+
+                        if (m_Leader is PlayerMobile)
+                        {
+                            ((PlayerMobile)m_Leader).GuildRank = RankDefinition.Leader;
+                        }
+
+                        m_Name = (string)g.m_Name;
+                        m_Abbreviation = (string)g.m_Abbreviation;
+
+                        m_Allies = ReadStrongGuildList(g.m_Allies);
+                        m_Enemies = ReadStrongGuildList(g.m_Enemies);
+                        m_WarDeclarations = ReadStrongGuildList(g.m_WarDeclarations);
+                        m_WarInvitations = ReadStrongGuildList(g.m_WarInvitations);
+
+                        m_Members = ReadStrongMobileList(g.m_Members);
+                        m_Candidates = ReadStrongMobileList(g.m_Candidates);
+                        m_Accepted = ReadStrongMobileList(g.m_Accepted);
+
+                        if(g.m_Guildstone != null ) m_Guildstone = World.FindItem((int)g.m_Guildstone);
+                        if(g.m_Teleporter != null ) m_Teleporter = World.FindItem((int)g.m_Teleporter);
+
+                        m_Charter = g.m_Charter;
+                        m_Website = g.m_Website;
+
+        
+
+            if (m_AllyDeclarations == null)
+            {
+                m_AllyDeclarations = new List<Guild>();
+            }
+
+            if (m_AllyInvitations == null)
+            {
+                m_AllyInvitations = new List<Guild>();
+            }
+
+            if (m_AcceptedWars == null)
+            {
+                m_AcceptedWars = new List<WarDeclaration>();
+            }
+
+            if (m_PendingWars == null)
+            {
+                m_PendingWars = new List<WarDeclaration>();
+            }
+
+            /*
+            if ( ( !NewGuildSystem && m_Guildstone == null )|| m_Members.Count == 0 )
+            Disband();
+            */
+
+            Timer.DelayCall(TimeSpan.Zero, VerifyGuild_Callback);
+        }
+
+        public override void Deserialize(GenericReader reader)
 		{
 			int version = reader.ReadInt();
 

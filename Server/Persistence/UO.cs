@@ -68,6 +68,9 @@ namespace Database
             if (p.Name == "Skills") return false;
             if (p.Name == "Items") return false;
             if (p.Name == "Mobiles") return false;
+            if (p.Name == "GuildWars") return false;
+            if (p.Name == "GuildAlliances") return false;
+            if (p.Name == "Guilds") return false;
 
             if (attribute == null) return true;
             if (attribute.IsForeignKey == false) return true;

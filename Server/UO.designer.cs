@@ -30,21 +30,30 @@ namespace Database
 		
     #region Extensibility Method Definitions
     partial void OnCreated();
-    partial void InsertSkill(Skill instance);
-    partial void UpdateSkill(Skill instance);
-    partial void DeleteSkill(Skill instance);
     partial void InsertItemIndex(ItemIndex instance);
     partial void UpdateItemIndex(ItemIndex instance);
     partial void DeleteItemIndex(ItemIndex instance);
-    partial void InsertMobIndex(MobIndex instance);
-    partial void UpdateMobIndex(MobIndex instance);
-    partial void DeleteMobIndex(MobIndex instance);
-    partial void InsertItem(Item instance);
-    partial void UpdateItem(Item instance);
-    partial void DeleteItem(Item instance);
     partial void InsertMobile(Mobile instance);
     partial void UpdateMobile(Mobile instance);
     partial void DeleteMobile(Mobile instance);
+    partial void InsertMobIndex(MobIndex instance);
+    partial void UpdateMobIndex(MobIndex instance);
+    partial void DeleteMobIndex(MobIndex instance);
+    partial void InsertSkill(Skill instance);
+    partial void UpdateSkill(Skill instance);
+    partial void DeleteSkill(Skill instance);
+    partial void InsertGuild(Guild instance);
+    partial void UpdateGuild(Guild instance);
+    partial void DeleteGuild(Guild instance);
+    partial void InsertGuildAlliance(GuildAlliance instance);
+    partial void UpdateGuildAlliance(GuildAlliance instance);
+    partial void DeleteGuildAlliance(GuildAlliance instance);
+    partial void InsertGuildWar(GuildWar instance);
+    partial void UpdateGuildWar(GuildWar instance);
+    partial void DeleteGuildWar(GuildWar instance);
+    partial void InsertItem(Item instance);
+    partial void UpdateItem(Item instance);
+    partial void DeleteItem(Item instance);
     #endregion
 		
 		public UODataContext() : 
@@ -77,19 +86,19 @@ namespace Database
 			OnCreated();
 		}
 		
-		public System.Data.Linq.Table<Skill> Skills
-		{
-			get
-			{
-				return this.GetTable<Skill>();
-			}
-		}
-		
 		public System.Data.Linq.Table<ItemIndex> ItemIndexes
 		{
 			get
 			{
 				return this.GetTable<ItemIndex>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Mobile> Mobiles
+		{
+			get
+			{
+				return this.GetTable<Mobile>();
 			}
 		}
 		
@@ -101,242 +110,43 @@ namespace Database
 			}
 		}
 		
+		public System.Data.Linq.Table<Skill> Skills
+		{
+			get
+			{
+				return this.GetTable<Skill>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Guild> Guilds
+		{
+			get
+			{
+				return this.GetTable<Guild>();
+			}
+		}
+		
+		public System.Data.Linq.Table<GuildAlliance> GuildAlliances
+		{
+			get
+			{
+				return this.GetTable<GuildAlliance>();
+			}
+		}
+		
+		public System.Data.Linq.Table<GuildWar> GuildWars
+		{
+			get
+			{
+				return this.GetTable<GuildWar>();
+			}
+		}
+		
 		public System.Data.Linq.Table<Item> Items
 		{
 			get
 			{
 				return this.GetTable<Item>();
-			}
-		}
-		
-		public System.Data.Linq.Table<Mobile> Mobiles
-		{
-			get
-			{
-				return this.GetTable<Mobile>();
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Skills")]
-	public partial class Skill : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _Id;
-		
-		private System.Nullable<int> _Parent;
-		
-		private string _Name;
-		
-		private System.Nullable<byte> _Lock;
-		
-		private System.Nullable<double> _Base;
-		
-		private System.Nullable<int> _Cap;
-		
-		private EntityRef<Mobile> _Mobile;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnIdChanging(int value);
-    partial void OnIdChanged();
-    partial void OnParentChanging(System.Nullable<int> value);
-    partial void OnParentChanged();
-    partial void OnNameChanging(string value);
-    partial void OnNameChanged();
-    partial void OnLockChanging(System.Nullable<byte> value);
-    partial void OnLockChanged();
-    partial void OnBaseChanging(System.Nullable<double> value);
-    partial void OnBaseChanged();
-    partial void OnCapChanging(System.Nullable<int> value);
-    partial void OnCapChanged();
-    #endregion
-		
-		public Skill()
-		{
-			this._Mobile = default(EntityRef<Mobile>);
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", DbType="Int NOT NULL", IsPrimaryKey=true)]
-		public int Id
-		{
-			get
-			{
-				return this._Id;
-			}
-			set
-			{
-				if ((this._Id != value))
-				{
-					this.OnIdChanging(value);
-					this.SendPropertyChanging();
-					this._Id = value;
-					this.SendPropertyChanged("Id");
-					this.OnIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Parent", DbType="Int")]
-		public System.Nullable<int> Parent
-		{
-			get
-			{
-				return this._Parent;
-			}
-			set
-			{
-				if ((this._Parent != value))
-				{
-					if (this._Mobile.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnParentChanging(value);
-					this.SendPropertyChanging();
-					this._Parent = value;
-					this.SendPropertyChanged("Parent");
-					this.OnParentChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="VarChar(50)")]
-		public string Name
-		{
-			get
-			{
-				return this._Name;
-			}
-			set
-			{
-				if ((this._Name != value))
-				{
-					this.OnNameChanging(value);
-					this.SendPropertyChanging();
-					this._Name = value;
-					this.SendPropertyChanged("Name");
-					this.OnNameChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Lock", DbType="TinyInt")]
-		public System.Nullable<byte> Lock
-		{
-			get
-			{
-				return this._Lock;
-			}
-			set
-			{
-				if ((this._Lock != value))
-				{
-					this.OnLockChanging(value);
-					this.SendPropertyChanging();
-					this._Lock = value;
-					this.SendPropertyChanged("Lock");
-					this.OnLockChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Base", DbType="Float")]
-		public System.Nullable<double> Base
-		{
-			get
-			{
-				return this._Base;
-			}
-			set
-			{
-				if ((this._Base != value))
-				{
-					this.OnBaseChanging(value);
-					this.SendPropertyChanging();
-					this._Base = value;
-					this.SendPropertyChanged("Base");
-					this.OnBaseChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Cap", DbType="Int")]
-		public System.Nullable<int> Cap
-		{
-			get
-			{
-				return this._Cap;
-			}
-			set
-			{
-				if ((this._Cap != value))
-				{
-					this.OnCapChanging(value);
-					this.SendPropertyChanging();
-					this._Cap = value;
-					this.SendPropertyChanged("Cap");
-					this.OnCapChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mobile_Skill", Storage="_Mobile", ThisKey="Parent", OtherKey="Id", IsForeignKey=true)]
-		public Mobile Mobile
-		{
-			get
-			{
-				return this._Mobile.Entity;
-			}
-			set
-			{
-				Mobile previousValue = this._Mobile.Entity;
-				if (((previousValue != value) 
-							|| (this._Mobile.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Mobile.Entity = null;
-						previousValue.Skills.Remove(this);
-					}
-					this._Mobile.Entity = value;
-					if ((value != null))
-					{
-						value.Skills.Add(this);
-						this._Parent = value.Id;
-					}
-					else
-					{
-						this._Parent = default(Nullable<int>);
-					}
-					this.SendPropertyChanged("Mobile");
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
 		}
 	}
@@ -402,1059 +212,6 @@ namespace Database
 					this._ItemTypes = value;
 					this.SendPropertyChanged("ItemTypes");
 					this.OnItemTypesChanged();
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.MobIndex")]
-	public partial class MobIndex : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _Id;
-		
-		private string _MobTypes;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnIdChanging(int value);
-    partial void OnIdChanged();
-    partial void OnMobTypesChanging(string value);
-    partial void OnMobTypesChanged();
-    #endregion
-		
-		public MobIndex()
-		{
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", DbType="Int NOT NULL", IsPrimaryKey=true)]
-		public int Id
-		{
-			get
-			{
-				return this._Id;
-			}
-			set
-			{
-				if ((this._Id != value))
-				{
-					this.OnIdChanging(value);
-					this.SendPropertyChanging();
-					this._Id = value;
-					this.SendPropertyChanged("Id");
-					this.OnIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MobTypes", DbType="VarChar(MAX)")]
-		public string MobTypes
-		{
-			get
-			{
-				return this._MobTypes;
-			}
-			set
-			{
-				if ((this._MobTypes != value))
-				{
-					this.OnMobTypesChanging(value);
-					this.SendPropertyChanging();
-					this._MobTypes = value;
-					this.SendPropertyChanged("MobTypes");
-					this.OnMobTypesChanged();
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Items")]
-	public partial class Item : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _Id;
-		
-		private System.Nullable<int> _TypeID;
-		
-		private System.Nullable<int> _Serial;
-		
-		private System.Nullable<byte> _BounceMap;
-		
-		private System.Nullable<int> _BounceLocX;
-		
-		private System.Nullable<int> _BounceLocY;
-		
-		private System.Nullable<int> _BounceLocZ;
-		
-		private System.Nullable<int> _BounceWLocX;
-		
-		private System.Nullable<int> _BounceWLocY;
-		
-		private System.Nullable<int> _BounceWLocZ;
-		
-		private System.Nullable<int> _BounceParentSerial;
-		
-		private System.Nullable<bool> _BounceParentType;
-		
-		private System.Nullable<byte> _m_LootType;
-		
-		private System.Nullable<int> _LocX;
-		
-		private System.Nullable<int> _LocY;
-		
-		private System.Nullable<int> _LocZ;
-		
-		private System.Nullable<int> _ItemID;
-		
-		private System.Nullable<int> _m_Hue;
-		
-		private System.Nullable<int> _m_Amount;
-		
-		private System.Nullable<byte> _m_Layer;
-		
-		private string _m_Name;
-		
-		private System.Nullable<int> _m_Parent;
-		
-		private System.Nullable<bool> _ParentType;
-		
-		private string _m_Items;
-		
-		private System.Nullable<double> _m_Weight;
-		
-		private System.Nullable<byte> _m_Map;
-		
-		private System.Nullable<int> _m_BlessedFor;
-		
-		private System.Nullable<int> _m_HeldBy;
-		
-		private System.Nullable<int> _m_SavedFlags;
-		
-		private string _m_Description;
-		
-		private System.Nullable<byte> _m_Direction;
-		
-		private System.Nullable<int> _flags;
-		
-		private System.Nullable<bool> _m_Visible;
-		
-		private System.Nullable<bool> _m_Movable;
-		
-		private System.Nullable<bool> _m_Stackable;
-		
-		private System.Nullable<int> _m_ImplFlags;
-		
-		private string _strim;
-		
-		private EntityRef<Mobile> _Mobile;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnIdChanging(int value);
-    partial void OnIdChanged();
-    partial void OnTypeIDChanging(System.Nullable<int> value);
-    partial void OnTypeIDChanged();
-    partial void OnSerialChanging(System.Nullable<int> value);
-    partial void OnSerialChanged();
-    partial void OnBounceMapChanging(System.Nullable<byte> value);
-    partial void OnBounceMapChanged();
-    partial void OnBounceLocXChanging(System.Nullable<int> value);
-    partial void OnBounceLocXChanged();
-    partial void OnBounceLocYChanging(System.Nullable<int> value);
-    partial void OnBounceLocYChanged();
-    partial void OnBounceLocZChanging(System.Nullable<int> value);
-    partial void OnBounceLocZChanged();
-    partial void OnBounceWLocXChanging(System.Nullable<int> value);
-    partial void OnBounceWLocXChanged();
-    partial void OnBounceWLocYChanging(System.Nullable<int> value);
-    partial void OnBounceWLocYChanged();
-    partial void OnBounceWLocZChanging(System.Nullable<int> value);
-    partial void OnBounceWLocZChanged();
-    partial void OnBounceParentSerialChanging(System.Nullable<int> value);
-    partial void OnBounceParentSerialChanged();
-    partial void OnBounceParentTypeChanging(System.Nullable<bool> value);
-    partial void OnBounceParentTypeChanged();
-    partial void Onm_LootTypeChanging(System.Nullable<byte> value);
-    partial void Onm_LootTypeChanged();
-    partial void OnLocXChanging(System.Nullable<int> value);
-    partial void OnLocXChanged();
-    partial void OnLocYChanging(System.Nullable<int> value);
-    partial void OnLocYChanged();
-    partial void OnLocZChanging(System.Nullable<int> value);
-    partial void OnLocZChanged();
-    partial void OnItemIDChanging(System.Nullable<int> value);
-    partial void OnItemIDChanged();
-    partial void Onm_HueChanging(System.Nullable<int> value);
-    partial void Onm_HueChanged();
-    partial void Onm_AmountChanging(System.Nullable<int> value);
-    partial void Onm_AmountChanged();
-    partial void Onm_LayerChanging(System.Nullable<byte> value);
-    partial void Onm_LayerChanged();
-    partial void Onm_NameChanging(string value);
-    partial void Onm_NameChanged();
-    partial void Onm_ParentChanging(System.Nullable<int> value);
-    partial void Onm_ParentChanged();
-    partial void OnParentTypeChanging(System.Nullable<bool> value);
-    partial void OnParentTypeChanged();
-    partial void Onm_ItemsChanging(string value);
-    partial void Onm_ItemsChanged();
-    partial void Onm_WeightChanging(System.Nullable<double> value);
-    partial void Onm_WeightChanged();
-    partial void Onm_MapChanging(System.Nullable<byte> value);
-    partial void Onm_MapChanged();
-    partial void Onm_BlessedForChanging(System.Nullable<int> value);
-    partial void Onm_BlessedForChanged();
-    partial void Onm_HeldByChanging(System.Nullable<int> value);
-    partial void Onm_HeldByChanged();
-    partial void Onm_SavedFlagsChanging(System.Nullable<int> value);
-    partial void Onm_SavedFlagsChanged();
-    partial void Onm_DescriptionChanging(string value);
-    partial void Onm_DescriptionChanged();
-    partial void Onm_DirectionChanging(System.Nullable<byte> value);
-    partial void Onm_DirectionChanged();
-    partial void OnflagsChanging(System.Nullable<int> value);
-    partial void OnflagsChanged();
-    partial void Onm_VisibleChanging(System.Nullable<bool> value);
-    partial void Onm_VisibleChanged();
-    partial void Onm_MovableChanging(System.Nullable<bool> value);
-    partial void Onm_MovableChanged();
-    partial void Onm_StackableChanging(System.Nullable<bool> value);
-    partial void Onm_StackableChanged();
-    partial void Onm_ImplFlagsChanging(System.Nullable<int> value);
-    partial void Onm_ImplFlagsChanged();
-    partial void OnstrimChanging(string value);
-    partial void OnstrimChanged();
-    #endregion
-		
-		public Item()
-		{
-			this._Mobile = default(EntityRef<Mobile>);
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", DbType="Int NOT NULL", IsPrimaryKey=true)]
-		public int Id
-		{
-			get
-			{
-				return this._Id;
-			}
-			set
-			{
-				if ((this._Id != value))
-				{
-					this.OnIdChanging(value);
-					this.SendPropertyChanging();
-					this._Id = value;
-					this.SendPropertyChanged("Id");
-					this.OnIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TypeID", DbType="Int")]
-		public System.Nullable<int> TypeID
-		{
-			get
-			{
-				return this._TypeID;
-			}
-			set
-			{
-				if ((this._TypeID != value))
-				{
-					this.OnTypeIDChanging(value);
-					this.SendPropertyChanging();
-					this._TypeID = value;
-					this.SendPropertyChanged("TypeID");
-					this.OnTypeIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Serial", DbType="Int")]
-		public System.Nullable<int> Serial
-		{
-			get
-			{
-				return this._Serial;
-			}
-			set
-			{
-				if ((this._Serial != value))
-				{
-					this.OnSerialChanging(value);
-					this.SendPropertyChanging();
-					this._Serial = value;
-					this.SendPropertyChanged("Serial");
-					this.OnSerialChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BounceMap", DbType="TinyInt")]
-		public System.Nullable<byte> BounceMap
-		{
-			get
-			{
-				return this._BounceMap;
-			}
-			set
-			{
-				if ((this._BounceMap != value))
-				{
-					this.OnBounceMapChanging(value);
-					this.SendPropertyChanging();
-					this._BounceMap = value;
-					this.SendPropertyChanged("BounceMap");
-					this.OnBounceMapChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BounceLocX", DbType="Int")]
-		public System.Nullable<int> BounceLocX
-		{
-			get
-			{
-				return this._BounceLocX;
-			}
-			set
-			{
-				if ((this._BounceLocX != value))
-				{
-					this.OnBounceLocXChanging(value);
-					this.SendPropertyChanging();
-					this._BounceLocX = value;
-					this.SendPropertyChanged("BounceLocX");
-					this.OnBounceLocXChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BounceLocY", DbType="Int")]
-		public System.Nullable<int> BounceLocY
-		{
-			get
-			{
-				return this._BounceLocY;
-			}
-			set
-			{
-				if ((this._BounceLocY != value))
-				{
-					this.OnBounceLocYChanging(value);
-					this.SendPropertyChanging();
-					this._BounceLocY = value;
-					this.SendPropertyChanged("BounceLocY");
-					this.OnBounceLocYChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BounceLocZ", DbType="Int")]
-		public System.Nullable<int> BounceLocZ
-		{
-			get
-			{
-				return this._BounceLocZ;
-			}
-			set
-			{
-				if ((this._BounceLocZ != value))
-				{
-					this.OnBounceLocZChanging(value);
-					this.SendPropertyChanging();
-					this._BounceLocZ = value;
-					this.SendPropertyChanged("BounceLocZ");
-					this.OnBounceLocZChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BounceWLocX", DbType="Int")]
-		public System.Nullable<int> BounceWLocX
-		{
-			get
-			{
-				return this._BounceWLocX;
-			}
-			set
-			{
-				if ((this._BounceWLocX != value))
-				{
-					this.OnBounceWLocXChanging(value);
-					this.SendPropertyChanging();
-					this._BounceWLocX = value;
-					this.SendPropertyChanged("BounceWLocX");
-					this.OnBounceWLocXChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BounceWLocY", DbType="Int")]
-		public System.Nullable<int> BounceWLocY
-		{
-			get
-			{
-				return this._BounceWLocY;
-			}
-			set
-			{
-				if ((this._BounceWLocY != value))
-				{
-					this.OnBounceWLocYChanging(value);
-					this.SendPropertyChanging();
-					this._BounceWLocY = value;
-					this.SendPropertyChanged("BounceWLocY");
-					this.OnBounceWLocYChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BounceWLocZ", DbType="Int")]
-		public System.Nullable<int> BounceWLocZ
-		{
-			get
-			{
-				return this._BounceWLocZ;
-			}
-			set
-			{
-				if ((this._BounceWLocZ != value))
-				{
-					this.OnBounceWLocZChanging(value);
-					this.SendPropertyChanging();
-					this._BounceWLocZ = value;
-					this.SendPropertyChanged("BounceWLocZ");
-					this.OnBounceWLocZChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BounceParentSerial", DbType="Int")]
-		public System.Nullable<int> BounceParentSerial
-		{
-			get
-			{
-				return this._BounceParentSerial;
-			}
-			set
-			{
-				if ((this._BounceParentSerial != value))
-				{
-					this.OnBounceParentSerialChanging(value);
-					this.SendPropertyChanging();
-					this._BounceParentSerial = value;
-					this.SendPropertyChanged("BounceParentSerial");
-					this.OnBounceParentSerialChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BounceParentType", DbType="Bit")]
-		public System.Nullable<bool> BounceParentType
-		{
-			get
-			{
-				return this._BounceParentType;
-			}
-			set
-			{
-				if ((this._BounceParentType != value))
-				{
-					this.OnBounceParentTypeChanging(value);
-					this.SendPropertyChanging();
-					this._BounceParentType = value;
-					this.SendPropertyChanged("BounceParentType");
-					this.OnBounceParentTypeChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_LootType", DbType="TinyInt")]
-		public System.Nullable<byte> m_LootType
-		{
-			get
-			{
-				return this._m_LootType;
-			}
-			set
-			{
-				if ((this._m_LootType != value))
-				{
-					this.Onm_LootTypeChanging(value);
-					this.SendPropertyChanging();
-					this._m_LootType = value;
-					this.SendPropertyChanged("m_LootType");
-					this.Onm_LootTypeChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LocX", DbType="Int")]
-		public System.Nullable<int> LocX
-		{
-			get
-			{
-				return this._LocX;
-			}
-			set
-			{
-				if ((this._LocX != value))
-				{
-					this.OnLocXChanging(value);
-					this.SendPropertyChanging();
-					this._LocX = value;
-					this.SendPropertyChanged("LocX");
-					this.OnLocXChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LocY", DbType="Int")]
-		public System.Nullable<int> LocY
-		{
-			get
-			{
-				return this._LocY;
-			}
-			set
-			{
-				if ((this._LocY != value))
-				{
-					this.OnLocYChanging(value);
-					this.SendPropertyChanging();
-					this._LocY = value;
-					this.SendPropertyChanged("LocY");
-					this.OnLocYChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LocZ", DbType="Int")]
-		public System.Nullable<int> LocZ
-		{
-			get
-			{
-				return this._LocZ;
-			}
-			set
-			{
-				if ((this._LocZ != value))
-				{
-					this.OnLocZChanging(value);
-					this.SendPropertyChanging();
-					this._LocZ = value;
-					this.SendPropertyChanged("LocZ");
-					this.OnLocZChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ItemID", DbType="Int")]
-		public System.Nullable<int> ItemID
-		{
-			get
-			{
-				return this._ItemID;
-			}
-			set
-			{
-				if ((this._ItemID != value))
-				{
-					this.OnItemIDChanging(value);
-					this.SendPropertyChanging();
-					this._ItemID = value;
-					this.SendPropertyChanged("ItemID");
-					this.OnItemIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Hue", DbType="Int")]
-		public System.Nullable<int> m_Hue
-		{
-			get
-			{
-				return this._m_Hue;
-			}
-			set
-			{
-				if ((this._m_Hue != value))
-				{
-					this.Onm_HueChanging(value);
-					this.SendPropertyChanging();
-					this._m_Hue = value;
-					this.SendPropertyChanged("m_Hue");
-					this.Onm_HueChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Amount", DbType="Int")]
-		public System.Nullable<int> m_Amount
-		{
-			get
-			{
-				return this._m_Amount;
-			}
-			set
-			{
-				if ((this._m_Amount != value))
-				{
-					this.Onm_AmountChanging(value);
-					this.SendPropertyChanging();
-					this._m_Amount = value;
-					this.SendPropertyChanged("m_Amount");
-					this.Onm_AmountChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Layer", DbType="TinyInt")]
-		public System.Nullable<byte> m_Layer
-		{
-			get
-			{
-				return this._m_Layer;
-			}
-			set
-			{
-				if ((this._m_Layer != value))
-				{
-					this.Onm_LayerChanging(value);
-					this.SendPropertyChanging();
-					this._m_Layer = value;
-					this.SendPropertyChanged("m_Layer");
-					this.Onm_LayerChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Name", DbType="VarChar(MAX)")]
-		public string m_Name
-		{
-			get
-			{
-				return this._m_Name;
-			}
-			set
-			{
-				if ((this._m_Name != value))
-				{
-					this.Onm_NameChanging(value);
-					this.SendPropertyChanging();
-					this._m_Name = value;
-					this.SendPropertyChanged("m_Name");
-					this.Onm_NameChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Parent", DbType="Int")]
-		public System.Nullable<int> m_Parent
-		{
-			get
-			{
-				return this._m_Parent;
-			}
-			set
-			{
-				if ((this._m_Parent != value))
-				{
-					if (this._Mobile.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.Onm_ParentChanging(value);
-					this.SendPropertyChanging();
-					this._m_Parent = value;
-					this.SendPropertyChanged("m_Parent");
-					this.Onm_ParentChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ParentType", DbType="Bit")]
-		public System.Nullable<bool> ParentType
-		{
-			get
-			{
-				return this._ParentType;
-			}
-			set
-			{
-				if ((this._ParentType != value))
-				{
-					this.OnParentTypeChanging(value);
-					this.SendPropertyChanging();
-					this._ParentType = value;
-					this.SendPropertyChanged("ParentType");
-					this.OnParentTypeChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Items", DbType="VarChar(MAX)")]
-		public string m_Items
-		{
-			get
-			{
-				return this._m_Items;
-			}
-			set
-			{
-				if ((this._m_Items != value))
-				{
-					this.Onm_ItemsChanging(value);
-					this.SendPropertyChanging();
-					this._m_Items = value;
-					this.SendPropertyChanged("m_Items");
-					this.Onm_ItemsChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Weight", DbType="Float")]
-		public System.Nullable<double> m_Weight
-		{
-			get
-			{
-				return this._m_Weight;
-			}
-			set
-			{
-				if ((this._m_Weight != value))
-				{
-					this.Onm_WeightChanging(value);
-					this.SendPropertyChanging();
-					this._m_Weight = value;
-					this.SendPropertyChanged("m_Weight");
-					this.Onm_WeightChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Map", DbType="TinyInt")]
-		public System.Nullable<byte> m_Map
-		{
-			get
-			{
-				return this._m_Map;
-			}
-			set
-			{
-				if ((this._m_Map != value))
-				{
-					this.Onm_MapChanging(value);
-					this.SendPropertyChanging();
-					this._m_Map = value;
-					this.SendPropertyChanged("m_Map");
-					this.Onm_MapChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_BlessedFor", DbType="Int")]
-		public System.Nullable<int> m_BlessedFor
-		{
-			get
-			{
-				return this._m_BlessedFor;
-			}
-			set
-			{
-				if ((this._m_BlessedFor != value))
-				{
-					this.Onm_BlessedForChanging(value);
-					this.SendPropertyChanging();
-					this._m_BlessedFor = value;
-					this.SendPropertyChanged("m_BlessedFor");
-					this.Onm_BlessedForChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_HeldBy", DbType="Int")]
-		public System.Nullable<int> m_HeldBy
-		{
-			get
-			{
-				return this._m_HeldBy;
-			}
-			set
-			{
-				if ((this._m_HeldBy != value))
-				{
-					this.Onm_HeldByChanging(value);
-					this.SendPropertyChanging();
-					this._m_HeldBy = value;
-					this.SendPropertyChanged("m_HeldBy");
-					this.Onm_HeldByChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_SavedFlags", DbType="Int")]
-		public System.Nullable<int> m_SavedFlags
-		{
-			get
-			{
-				return this._m_SavedFlags;
-			}
-			set
-			{
-				if ((this._m_SavedFlags != value))
-				{
-					this.Onm_SavedFlagsChanging(value);
-					this.SendPropertyChanging();
-					this._m_SavedFlags = value;
-					this.SendPropertyChanged("m_SavedFlags");
-					this.Onm_SavedFlagsChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Description", DbType="VarChar(MAX)")]
-		public string m_Description
-		{
-			get
-			{
-				return this._m_Description;
-			}
-			set
-			{
-				if ((this._m_Description != value))
-				{
-					this.Onm_DescriptionChanging(value);
-					this.SendPropertyChanging();
-					this._m_Description = value;
-					this.SendPropertyChanged("m_Description");
-					this.Onm_DescriptionChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Direction", DbType="TinyInt")]
-		public System.Nullable<byte> m_Direction
-		{
-			get
-			{
-				return this._m_Direction;
-			}
-			set
-			{
-				if ((this._m_Direction != value))
-				{
-					this.Onm_DirectionChanging(value);
-					this.SendPropertyChanging();
-					this._m_Direction = value;
-					this.SendPropertyChanged("m_Direction");
-					this.Onm_DirectionChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_flags", DbType="Int")]
-		public System.Nullable<int> flags
-		{
-			get
-			{
-				return this._flags;
-			}
-			set
-			{
-				if ((this._flags != value))
-				{
-					this.OnflagsChanging(value);
-					this.SendPropertyChanging();
-					this._flags = value;
-					this.SendPropertyChanged("flags");
-					this.OnflagsChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Visible", DbType="Bit")]
-		public System.Nullable<bool> m_Visible
-		{
-			get
-			{
-				return this._m_Visible;
-			}
-			set
-			{
-				if ((this._m_Visible != value))
-				{
-					this.Onm_VisibleChanging(value);
-					this.SendPropertyChanging();
-					this._m_Visible = value;
-					this.SendPropertyChanged("m_Visible");
-					this.Onm_VisibleChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Movable", DbType="Bit")]
-		public System.Nullable<bool> m_Movable
-		{
-			get
-			{
-				return this._m_Movable;
-			}
-			set
-			{
-				if ((this._m_Movable != value))
-				{
-					this.Onm_MovableChanging(value);
-					this.SendPropertyChanging();
-					this._m_Movable = value;
-					this.SendPropertyChanged("m_Movable");
-					this.Onm_MovableChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Stackable", DbType="Bit")]
-		public System.Nullable<bool> m_Stackable
-		{
-			get
-			{
-				return this._m_Stackable;
-			}
-			set
-			{
-				if ((this._m_Stackable != value))
-				{
-					this.Onm_StackableChanging(value);
-					this.SendPropertyChanging();
-					this._m_Stackable = value;
-					this.SendPropertyChanged("m_Stackable");
-					this.Onm_StackableChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_ImplFlags", DbType="Int")]
-		public System.Nullable<int> m_ImplFlags
-		{
-			get
-			{
-				return this._m_ImplFlags;
-			}
-			set
-			{
-				if ((this._m_ImplFlags != value))
-				{
-					this.Onm_ImplFlagsChanging(value);
-					this.SendPropertyChanging();
-					this._m_ImplFlags = value;
-					this.SendPropertyChanged("m_ImplFlags");
-					this.Onm_ImplFlagsChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_strim", DbType="VarChar(MAX)")]
-		public string strim
-		{
-			get
-			{
-				return this._strim;
-			}
-			set
-			{
-				if ((this._strim != value))
-				{
-					this.OnstrimChanging(value);
-					this.SendPropertyChanging();
-					this._strim = value;
-					this.SendPropertyChanged("strim");
-					this.OnstrimChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mobile_Item", Storage="_Mobile", ThisKey="m_Parent", OtherKey="Id", IsForeignKey=true)]
-		public Mobile Mobile
-		{
-			get
-			{
-				return this._Mobile.Entity;
-			}
-			set
-			{
-				Mobile previousValue = this._Mobile.Entity;
-				if (((previousValue != value) 
-							|| (this._Mobile.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Mobile.Entity = null;
-						previousValue.Items.Remove(this);
-					}
-					this._Mobile.Entity = value;
-					if ((value != null))
-					{
-						value.Items.Add(this);
-						this._m_Parent = value.Id;
-					}
-					else
-					{
-						this._m_Parent = default(Nullable<int>);
-					}
-					this.SendPropertyChanged("Mobile");
 				}
 			}
 		}
@@ -1650,9 +407,9 @@ namespace Database
 		
 		private string _Data;
 		
-		private EntitySet<Item> _Items;
-		
 		private EntitySet<Skill> _Skills;
+		
+		private EntitySet<Item> _Items;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -1826,8 +583,8 @@ namespace Database
 		
 		public Mobile()
 		{
-			this._Items = new EntitySet<Item>(new Action<Item>(this.attach_Items), new Action<Item>(this.detach_Items));
 			this._Skills = new EntitySet<Skill>(new Action<Skill>(this.attach_Skills), new Action<Skill>(this.detach_Skills));
+			this._Items = new EntitySet<Item>(new Action<Item>(this.attach_Items), new Action<Item>(this.detach_Items));
 			OnCreated();
 		}
 		
@@ -3471,19 +2228,6 @@ namespace Database
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mobile_Item", Storage="_Items", ThisKey="Id", OtherKey="m_Parent")]
-		public EntitySet<Item> Items
-		{
-			get
-			{
-				return this._Items;
-			}
-			set
-			{
-				this._Items.Assign(value);
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mobile_Skill", Storage="_Skills", ThisKey="Id", OtherKey="Parent")]
 		public EntitySet<Skill> Skills
 		{
@@ -3494,6 +2238,19 @@ namespace Database
 			set
 			{
 				this._Skills.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mobile_Item", Storage="_Items", ThisKey="Id", OtherKey="m_Parent")]
+		public EntitySet<Item> Items
+		{
+			get
+			{
+				return this._Items;
+			}
+			set
+			{
+				this._Items.Assign(value);
 			}
 		}
 		
@@ -3517,6 +2274,18 @@ namespace Database
 			}
 		}
 		
+		private void attach_Skills(Skill entity)
+		{
+			this.SendPropertyChanging();
+			entity.Mobile = this;
+		}
+		
+		private void detach_Skills(Skill entity)
+		{
+			this.SendPropertyChanging();
+			entity.Mobile = null;
+		}
+		
 		private void attach_Items(Item entity)
 		{
 			this.SendPropertyChanging();
@@ -3528,17 +2297,2235 @@ namespace Database
 			this.SendPropertyChanging();
 			entity.Mobile = null;
 		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.MobIndex")]
+	public partial class MobIndex : INotifyPropertyChanging, INotifyPropertyChanged
+	{
 		
-		private void attach_Skills(Skill entity)
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _Id;
+		
+		private string _MobTypes;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIdChanging(int value);
+    partial void OnIdChanged();
+    partial void OnMobTypesChanging(string value);
+    partial void OnMobTypesChanged();
+    #endregion
+		
+		public MobIndex()
 		{
-			this.SendPropertyChanging();
-			entity.Mobile = this;
+			OnCreated();
 		}
 		
-		private void detach_Skills(Skill entity)
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int Id
 		{
-			this.SendPropertyChanging();
-			entity.Mobile = null;
+			get
+			{
+				return this._Id;
+			}
+			set
+			{
+				if ((this._Id != value))
+				{
+					this.OnIdChanging(value);
+					this.SendPropertyChanging();
+					this._Id = value;
+					this.SendPropertyChanged("Id");
+					this.OnIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MobTypes", DbType="VarChar(MAX)")]
+		public string MobTypes
+		{
+			get
+			{
+				return this._MobTypes;
+			}
+			set
+			{
+				if ((this._MobTypes != value))
+				{
+					this.OnMobTypesChanging(value);
+					this.SendPropertyChanging();
+					this._MobTypes = value;
+					this.SendPropertyChanged("MobTypes");
+					this.OnMobTypesChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Skills")]
+	public partial class Skill : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _Id;
+		
+		private System.Nullable<int> _Parent;
+		
+		private string _Name;
+		
+		private System.Nullable<byte> _Lock;
+		
+		private System.Nullable<double> _Base;
+		
+		private System.Nullable<int> _Cap;
+		
+		private EntityRef<Mobile> _Mobile;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIdChanging(int value);
+    partial void OnIdChanged();
+    partial void OnParentChanging(System.Nullable<int> value);
+    partial void OnParentChanged();
+    partial void OnNameChanging(string value);
+    partial void OnNameChanged();
+    partial void OnLockChanging(System.Nullable<byte> value);
+    partial void OnLockChanged();
+    partial void OnBaseChanging(System.Nullable<double> value);
+    partial void OnBaseChanged();
+    partial void OnCapChanging(System.Nullable<int> value);
+    partial void OnCapChanged();
+    #endregion
+		
+		public Skill()
+		{
+			this._Mobile = default(EntityRef<Mobile>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int Id
+		{
+			get
+			{
+				return this._Id;
+			}
+			set
+			{
+				if ((this._Id != value))
+				{
+					this.OnIdChanging(value);
+					this.SendPropertyChanging();
+					this._Id = value;
+					this.SendPropertyChanged("Id");
+					this.OnIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Parent", DbType="Int")]
+		public System.Nullable<int> Parent
+		{
+			get
+			{
+				return this._Parent;
+			}
+			set
+			{
+				if ((this._Parent != value))
+				{
+					if (this._Mobile.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnParentChanging(value);
+					this.SendPropertyChanging();
+					this._Parent = value;
+					this.SendPropertyChanged("Parent");
+					this.OnParentChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="VarChar(50)")]
+		public string Name
+		{
+			get
+			{
+				return this._Name;
+			}
+			set
+			{
+				if ((this._Name != value))
+				{
+					this.OnNameChanging(value);
+					this.SendPropertyChanging();
+					this._Name = value;
+					this.SendPropertyChanged("Name");
+					this.OnNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Lock", DbType="TinyInt")]
+		public System.Nullable<byte> Lock
+		{
+			get
+			{
+				return this._Lock;
+			}
+			set
+			{
+				if ((this._Lock != value))
+				{
+					this.OnLockChanging(value);
+					this.SendPropertyChanging();
+					this._Lock = value;
+					this.SendPropertyChanged("Lock");
+					this.OnLockChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Base", DbType="Float")]
+		public System.Nullable<double> Base
+		{
+			get
+			{
+				return this._Base;
+			}
+			set
+			{
+				if ((this._Base != value))
+				{
+					this.OnBaseChanging(value);
+					this.SendPropertyChanging();
+					this._Base = value;
+					this.SendPropertyChanged("Base");
+					this.OnBaseChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Cap", DbType="Int")]
+		public System.Nullable<int> Cap
+		{
+			get
+			{
+				return this._Cap;
+			}
+			set
+			{
+				if ((this._Cap != value))
+				{
+					this.OnCapChanging(value);
+					this.SendPropertyChanging();
+					this._Cap = value;
+					this.SendPropertyChanged("Cap");
+					this.OnCapChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mobile_Skill", Storage="_Mobile", ThisKey="Parent", OtherKey="Id", IsForeignKey=true)]
+		public Mobile Mobile
+		{
+			get
+			{
+				return this._Mobile.Entity;
+			}
+			set
+			{
+				Mobile previousValue = this._Mobile.Entity;
+				if (((previousValue != value) 
+							|| (this._Mobile.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Mobile.Entity = null;
+						previousValue.Skills.Remove(this);
+					}
+					this._Mobile.Entity = value;
+					if ((value != null))
+					{
+						value.Skills.Add(this);
+						this._Parent = value.Id;
+					}
+					else
+					{
+						this._Parent = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("Mobile");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Guilds")]
+	public partial class Guild : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _Id;
+		
+		private System.Nullable<System.DateTime> _m_TypeLastChange;
+		
+		private System.Nullable<int> _m_Type;
+		
+		private System.Nullable<System.DateTime> _m_LastFealty;
+		
+		private System.Nullable<int> _m_Leader;
+		
+		private string _m_Name;
+		
+		private string _m_Abbreviation;
+		
+		private string _m_Members;
+		
+		private string _m_Candidates;
+		
+		private string _m_Accepted;
+		
+		private System.Nullable<int> _m_Guildstone;
+		
+		private System.Nullable<int> _m_Teleporter;
+		
+		private string _m_Charter;
+		
+		private string _m_Website;
+		
+		private string _m_AllyDeclarations;
+		
+		private string _m_AllyInvitations;
+		
+		private string _m_Allies;
+		
+		private string _m_Enemies;
+		
+		private string _m_WarDeclarations;
+		
+		private string _m_WarInvitations;
+		
+		private System.Nullable<int> _m_AllianceLeader;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIdChanging(int value);
+    partial void OnIdChanged();
+    partial void Onm_TypeLastChangeChanging(System.Nullable<System.DateTime> value);
+    partial void Onm_TypeLastChangeChanged();
+    partial void Onm_TypeChanging(System.Nullable<int> value);
+    partial void Onm_TypeChanged();
+    partial void Onm_LastFealtyChanging(System.Nullable<System.DateTime> value);
+    partial void Onm_LastFealtyChanged();
+    partial void Onm_LeaderChanging(System.Nullable<int> value);
+    partial void Onm_LeaderChanged();
+    partial void Onm_NameChanging(string value);
+    partial void Onm_NameChanged();
+    partial void Onm_AbbreviationChanging(string value);
+    partial void Onm_AbbreviationChanged();
+    partial void Onm_MembersChanging(string value);
+    partial void Onm_MembersChanged();
+    partial void Onm_CandidatesChanging(string value);
+    partial void Onm_CandidatesChanged();
+    partial void Onm_AcceptedChanging(string value);
+    partial void Onm_AcceptedChanged();
+    partial void Onm_GuildstoneChanging(System.Nullable<int> value);
+    partial void Onm_GuildstoneChanged();
+    partial void Onm_TeleporterChanging(System.Nullable<int> value);
+    partial void Onm_TeleporterChanged();
+    partial void Onm_CharterChanging(string value);
+    partial void Onm_CharterChanged();
+    partial void Onm_WebsiteChanging(string value);
+    partial void Onm_WebsiteChanged();
+    partial void Onm_AllyDeclarationsChanging(string value);
+    partial void Onm_AllyDeclarationsChanged();
+    partial void Onm_AllyInvitationsChanging(string value);
+    partial void Onm_AllyInvitationsChanged();
+    partial void Onm_AlliesChanging(string value);
+    partial void Onm_AlliesChanged();
+    partial void Onm_EnemiesChanging(string value);
+    partial void Onm_EnemiesChanged();
+    partial void Onm_WarDeclarationsChanging(string value);
+    partial void Onm_WarDeclarationsChanged();
+    partial void Onm_WarInvitationsChanging(string value);
+    partial void Onm_WarInvitationsChanged();
+    partial void Onm_AllianceLeaderChanging(System.Nullable<int> value);
+    partial void Onm_AllianceLeaderChanged();
+    #endregion
+		
+		public Guild()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int Id
+		{
+			get
+			{
+				return this._Id;
+			}
+			set
+			{
+				if ((this._Id != value))
+				{
+					this.OnIdChanging(value);
+					this.SendPropertyChanging();
+					this._Id = value;
+					this.SendPropertyChanged("Id");
+					this.OnIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_TypeLastChange", DbType="DateTime")]
+		public System.Nullable<System.DateTime> m_TypeLastChange
+		{
+			get
+			{
+				return this._m_TypeLastChange;
+			}
+			set
+			{
+				if ((this._m_TypeLastChange != value))
+				{
+					this.Onm_TypeLastChangeChanging(value);
+					this.SendPropertyChanging();
+					this._m_TypeLastChange = value;
+					this.SendPropertyChanged("m_TypeLastChange");
+					this.Onm_TypeLastChangeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Type", DbType="Int")]
+		public System.Nullable<int> m_Type
+		{
+			get
+			{
+				return this._m_Type;
+			}
+			set
+			{
+				if ((this._m_Type != value))
+				{
+					this.Onm_TypeChanging(value);
+					this.SendPropertyChanging();
+					this._m_Type = value;
+					this.SendPropertyChanged("m_Type");
+					this.Onm_TypeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_LastFealty", DbType="DateTime")]
+		public System.Nullable<System.DateTime> m_LastFealty
+		{
+			get
+			{
+				return this._m_LastFealty;
+			}
+			set
+			{
+				if ((this._m_LastFealty != value))
+				{
+					this.Onm_LastFealtyChanging(value);
+					this.SendPropertyChanging();
+					this._m_LastFealty = value;
+					this.SendPropertyChanged("m_LastFealty");
+					this.Onm_LastFealtyChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Leader", DbType="Int")]
+		public System.Nullable<int> m_Leader
+		{
+			get
+			{
+				return this._m_Leader;
+			}
+			set
+			{
+				if ((this._m_Leader != value))
+				{
+					this.Onm_LeaderChanging(value);
+					this.SendPropertyChanging();
+					this._m_Leader = value;
+					this.SendPropertyChanged("m_Leader");
+					this.Onm_LeaderChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Name", DbType="VarChar(50)")]
+		public string m_Name
+		{
+			get
+			{
+				return this._m_Name;
+			}
+			set
+			{
+				if ((this._m_Name != value))
+				{
+					this.Onm_NameChanging(value);
+					this.SendPropertyChanging();
+					this._m_Name = value;
+					this.SendPropertyChanged("m_Name");
+					this.Onm_NameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Abbreviation", DbType="VarChar(50)")]
+		public string m_Abbreviation
+		{
+			get
+			{
+				return this._m_Abbreviation;
+			}
+			set
+			{
+				if ((this._m_Abbreviation != value))
+				{
+					this.Onm_AbbreviationChanging(value);
+					this.SendPropertyChanging();
+					this._m_Abbreviation = value;
+					this.SendPropertyChanged("m_Abbreviation");
+					this.Onm_AbbreviationChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Members", DbType="VarChar(MAX)")]
+		public string m_Members
+		{
+			get
+			{
+				return this._m_Members;
+			}
+			set
+			{
+				if ((this._m_Members != value))
+				{
+					this.Onm_MembersChanging(value);
+					this.SendPropertyChanging();
+					this._m_Members = value;
+					this.SendPropertyChanged("m_Members");
+					this.Onm_MembersChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Candidates", DbType="VarChar(MAX)")]
+		public string m_Candidates
+		{
+			get
+			{
+				return this._m_Candidates;
+			}
+			set
+			{
+				if ((this._m_Candidates != value))
+				{
+					this.Onm_CandidatesChanging(value);
+					this.SendPropertyChanging();
+					this._m_Candidates = value;
+					this.SendPropertyChanged("m_Candidates");
+					this.Onm_CandidatesChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Accepted", DbType="VarChar(MAX)")]
+		public string m_Accepted
+		{
+			get
+			{
+				return this._m_Accepted;
+			}
+			set
+			{
+				if ((this._m_Accepted != value))
+				{
+					this.Onm_AcceptedChanging(value);
+					this.SendPropertyChanging();
+					this._m_Accepted = value;
+					this.SendPropertyChanged("m_Accepted");
+					this.Onm_AcceptedChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Guildstone", DbType="Int")]
+		public System.Nullable<int> m_Guildstone
+		{
+			get
+			{
+				return this._m_Guildstone;
+			}
+			set
+			{
+				if ((this._m_Guildstone != value))
+				{
+					this.Onm_GuildstoneChanging(value);
+					this.SendPropertyChanging();
+					this._m_Guildstone = value;
+					this.SendPropertyChanged("m_Guildstone");
+					this.Onm_GuildstoneChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Teleporter", DbType="Int")]
+		public System.Nullable<int> m_Teleporter
+		{
+			get
+			{
+				return this._m_Teleporter;
+			}
+			set
+			{
+				if ((this._m_Teleporter != value))
+				{
+					this.Onm_TeleporterChanging(value);
+					this.SendPropertyChanging();
+					this._m_Teleporter = value;
+					this.SendPropertyChanged("m_Teleporter");
+					this.Onm_TeleporterChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Charter", DbType="VarChar(MAX)")]
+		public string m_Charter
+		{
+			get
+			{
+				return this._m_Charter;
+			}
+			set
+			{
+				if ((this._m_Charter != value))
+				{
+					this.Onm_CharterChanging(value);
+					this.SendPropertyChanging();
+					this._m_Charter = value;
+					this.SendPropertyChanged("m_Charter");
+					this.Onm_CharterChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Website", DbType="VarChar(MAX)")]
+		public string m_Website
+		{
+			get
+			{
+				return this._m_Website;
+			}
+			set
+			{
+				if ((this._m_Website != value))
+				{
+					this.Onm_WebsiteChanging(value);
+					this.SendPropertyChanging();
+					this._m_Website = value;
+					this.SendPropertyChanged("m_Website");
+					this.Onm_WebsiteChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_AllyDeclarations", DbType="VarChar(MAX)")]
+		public string m_AllyDeclarations
+		{
+			get
+			{
+				return this._m_AllyDeclarations;
+			}
+			set
+			{
+				if ((this._m_AllyDeclarations != value))
+				{
+					this.Onm_AllyDeclarationsChanging(value);
+					this.SendPropertyChanging();
+					this._m_AllyDeclarations = value;
+					this.SendPropertyChanged("m_AllyDeclarations");
+					this.Onm_AllyDeclarationsChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_AllyInvitations", DbType="VarChar(MAX)")]
+		public string m_AllyInvitations
+		{
+			get
+			{
+				return this._m_AllyInvitations;
+			}
+			set
+			{
+				if ((this._m_AllyInvitations != value))
+				{
+					this.Onm_AllyInvitationsChanging(value);
+					this.SendPropertyChanging();
+					this._m_AllyInvitations = value;
+					this.SendPropertyChanged("m_AllyInvitations");
+					this.Onm_AllyInvitationsChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Allies", DbType="VarChar(MAX)")]
+		public string m_Allies
+		{
+			get
+			{
+				return this._m_Allies;
+			}
+			set
+			{
+				if ((this._m_Allies != value))
+				{
+					this.Onm_AlliesChanging(value);
+					this.SendPropertyChanging();
+					this._m_Allies = value;
+					this.SendPropertyChanged("m_Allies");
+					this.Onm_AlliesChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Enemies", DbType="VarChar(MAX)")]
+		public string m_Enemies
+		{
+			get
+			{
+				return this._m_Enemies;
+			}
+			set
+			{
+				if ((this._m_Enemies != value))
+				{
+					this.Onm_EnemiesChanging(value);
+					this.SendPropertyChanging();
+					this._m_Enemies = value;
+					this.SendPropertyChanged("m_Enemies");
+					this.Onm_EnemiesChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_WarDeclarations", DbType="VarChar(MAX)")]
+		public string m_WarDeclarations
+		{
+			get
+			{
+				return this._m_WarDeclarations;
+			}
+			set
+			{
+				if ((this._m_WarDeclarations != value))
+				{
+					this.Onm_WarDeclarationsChanging(value);
+					this.SendPropertyChanging();
+					this._m_WarDeclarations = value;
+					this.SendPropertyChanged("m_WarDeclarations");
+					this.Onm_WarDeclarationsChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_WarInvitations", DbType="VarChar(MAX)")]
+		public string m_WarInvitations
+		{
+			get
+			{
+				return this._m_WarInvitations;
+			}
+			set
+			{
+				if ((this._m_WarInvitations != value))
+				{
+					this.Onm_WarInvitationsChanging(value);
+					this.SendPropertyChanging();
+					this._m_WarInvitations = value;
+					this.SendPropertyChanged("m_WarInvitations");
+					this.Onm_WarInvitationsChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_AllianceLeader", DbType="Int")]
+		public System.Nullable<int> m_AllianceLeader
+		{
+			get
+			{
+				return this._m_AllianceLeader;
+			}
+			set
+			{
+				if ((this._m_AllianceLeader != value))
+				{
+					this.Onm_AllianceLeaderChanging(value);
+					this.SendPropertyChanging();
+					this._m_AllianceLeader = value;
+					this.SendPropertyChanged("m_AllianceLeader");
+					this.Onm_AllianceLeaderChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.GuildAlliances")]
+	public partial class GuildAlliance : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _Id;
+		
+		private string _m_Name;
+		
+		private System.Nullable<int> _m_Leader;
+		
+		private string _m_Members;
+		
+		private string _m_PendingMembers;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIdChanging(int value);
+    partial void OnIdChanged();
+    partial void Onm_NameChanging(string value);
+    partial void Onm_NameChanged();
+    partial void Onm_LeaderChanging(System.Nullable<int> value);
+    partial void Onm_LeaderChanged();
+    partial void Onm_MembersChanging(string value);
+    partial void Onm_MembersChanged();
+    partial void Onm_PendingMembersChanging(string value);
+    partial void Onm_PendingMembersChanged();
+    #endregion
+		
+		public GuildAlliance()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int Id
+		{
+			get
+			{
+				return this._Id;
+			}
+			set
+			{
+				if ((this._Id != value))
+				{
+					this.OnIdChanging(value);
+					this.SendPropertyChanging();
+					this._Id = value;
+					this.SendPropertyChanged("Id");
+					this.OnIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Name", DbType="VarChar(50)")]
+		public string m_Name
+		{
+			get
+			{
+				return this._m_Name;
+			}
+			set
+			{
+				if ((this._m_Name != value))
+				{
+					this.Onm_NameChanging(value);
+					this.SendPropertyChanging();
+					this._m_Name = value;
+					this.SendPropertyChanged("m_Name");
+					this.Onm_NameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Leader", DbType="Int")]
+		public System.Nullable<int> m_Leader
+		{
+			get
+			{
+				return this._m_Leader;
+			}
+			set
+			{
+				if ((this._m_Leader != value))
+				{
+					this.Onm_LeaderChanging(value);
+					this.SendPropertyChanging();
+					this._m_Leader = value;
+					this.SendPropertyChanged("m_Leader");
+					this.Onm_LeaderChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Members", DbType="VarChar(MAX)")]
+		public string m_Members
+		{
+			get
+			{
+				return this._m_Members;
+			}
+			set
+			{
+				if ((this._m_Members != value))
+				{
+					this.Onm_MembersChanging(value);
+					this.SendPropertyChanging();
+					this._m_Members = value;
+					this.SendPropertyChanged("m_Members");
+					this.Onm_MembersChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_PendingMembers", DbType="VarChar(MAX)")]
+		public string m_PendingMembers
+		{
+			get
+			{
+				return this._m_PendingMembers;
+			}
+			set
+			{
+				if ((this._m_PendingMembers != value))
+				{
+					this.Onm_PendingMembersChanging(value);
+					this.SendPropertyChanging();
+					this._m_PendingMembers = value;
+					this.SendPropertyChanged("m_PendingMembers");
+					this.Onm_PendingMembersChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.GuildWars")]
+	public partial class GuildWar : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _Id;
+		
+		private System.Nullable<bool> _m_PendingWars;
+		
+		private System.Nullable<int> _m_Kills;
+		
+		private System.Nullable<int> _m_MaxKills;
+		
+		private System.Nullable<System.DateTimeOffset> _m_WarLength;
+		
+		private System.Nullable<System.DateTime> _m_WarBeginning;
+		
+		private System.Nullable<int> _m_Guild;
+		
+		private System.Nullable<int> _m_Opponent;
+		
+		private System.Nullable<bool> _m_WarRequester;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIdChanging(int value);
+    partial void OnIdChanged();
+    partial void Onm_PendingWarsChanging(System.Nullable<bool> value);
+    partial void Onm_PendingWarsChanged();
+    partial void Onm_KillsChanging(System.Nullable<int> value);
+    partial void Onm_KillsChanged();
+    partial void Onm_MaxKillsChanging(System.Nullable<int> value);
+    partial void Onm_MaxKillsChanged();
+    partial void Onm_WarLengthChanging(System.Nullable<System.DateTimeOffset> value);
+    partial void Onm_WarLengthChanged();
+    partial void Onm_WarBeginningChanging(System.Nullable<System.DateTime> value);
+    partial void Onm_WarBeginningChanged();
+    partial void Onm_GuildChanging(System.Nullable<int> value);
+    partial void Onm_GuildChanged();
+    partial void Onm_OpponentChanging(System.Nullable<int> value);
+    partial void Onm_OpponentChanged();
+    partial void Onm_WarRequesterChanging(System.Nullable<bool> value);
+    partial void Onm_WarRequesterChanged();
+    #endregion
+		
+		public GuildWar()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int Id
+		{
+			get
+			{
+				return this._Id;
+			}
+			set
+			{
+				if ((this._Id != value))
+				{
+					this.OnIdChanging(value);
+					this.SendPropertyChanging();
+					this._Id = value;
+					this.SendPropertyChanged("Id");
+					this.OnIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_PendingWars", DbType="Bit")]
+		public System.Nullable<bool> m_PendingWars
+		{
+			get
+			{
+				return this._m_PendingWars;
+			}
+			set
+			{
+				if ((this._m_PendingWars != value))
+				{
+					this.Onm_PendingWarsChanging(value);
+					this.SendPropertyChanging();
+					this._m_PendingWars = value;
+					this.SendPropertyChanged("m_PendingWars");
+					this.Onm_PendingWarsChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Kills", DbType="Int")]
+		public System.Nullable<int> m_Kills
+		{
+			get
+			{
+				return this._m_Kills;
+			}
+			set
+			{
+				if ((this._m_Kills != value))
+				{
+					this.Onm_KillsChanging(value);
+					this.SendPropertyChanging();
+					this._m_Kills = value;
+					this.SendPropertyChanged("m_Kills");
+					this.Onm_KillsChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_MaxKills", DbType="Int")]
+		public System.Nullable<int> m_MaxKills
+		{
+			get
+			{
+				return this._m_MaxKills;
+			}
+			set
+			{
+				if ((this._m_MaxKills != value))
+				{
+					this.Onm_MaxKillsChanging(value);
+					this.SendPropertyChanging();
+					this._m_MaxKills = value;
+					this.SendPropertyChanged("m_MaxKills");
+					this.Onm_MaxKillsChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_WarLength", DbType="DateTimeOffset")]
+		public System.Nullable<System.DateTimeOffset> m_WarLength
+		{
+			get
+			{
+				return this._m_WarLength;
+			}
+			set
+			{
+				if ((this._m_WarLength != value))
+				{
+					this.Onm_WarLengthChanging(value);
+					this.SendPropertyChanging();
+					this._m_WarLength = value;
+					this.SendPropertyChanged("m_WarLength");
+					this.Onm_WarLengthChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_WarBeginning", DbType="DateTime")]
+		public System.Nullable<System.DateTime> m_WarBeginning
+		{
+			get
+			{
+				return this._m_WarBeginning;
+			}
+			set
+			{
+				if ((this._m_WarBeginning != value))
+				{
+					this.Onm_WarBeginningChanging(value);
+					this.SendPropertyChanging();
+					this._m_WarBeginning = value;
+					this.SendPropertyChanged("m_WarBeginning");
+					this.Onm_WarBeginningChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Guild", DbType="Int")]
+		public System.Nullable<int> m_Guild
+		{
+			get
+			{
+				return this._m_Guild;
+			}
+			set
+			{
+				if ((this._m_Guild != value))
+				{
+					this.Onm_GuildChanging(value);
+					this.SendPropertyChanging();
+					this._m_Guild = value;
+					this.SendPropertyChanged("m_Guild");
+					this.Onm_GuildChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Opponent", DbType="Int")]
+		public System.Nullable<int> m_Opponent
+		{
+			get
+			{
+				return this._m_Opponent;
+			}
+			set
+			{
+				if ((this._m_Opponent != value))
+				{
+					this.Onm_OpponentChanging(value);
+					this.SendPropertyChanging();
+					this._m_Opponent = value;
+					this.SendPropertyChanged("m_Opponent");
+					this.Onm_OpponentChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_WarRequester", DbType="Bit")]
+		public System.Nullable<bool> m_WarRequester
+		{
+			get
+			{
+				return this._m_WarRequester;
+			}
+			set
+			{
+				if ((this._m_WarRequester != value))
+				{
+					this.Onm_WarRequesterChanging(value);
+					this.SendPropertyChanging();
+					this._m_WarRequester = value;
+					this.SendPropertyChanged("m_WarRequester");
+					this.Onm_WarRequesterChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Items")]
+	public partial class Item : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private long _Id;
+		
+		private System.Nullable<int> _TypeID;
+		
+		private System.Nullable<int> _Serial;
+		
+		private System.Nullable<byte> _BounceMap;
+		
+		private System.Nullable<int> _BounceLocX;
+		
+		private System.Nullable<int> _BounceLocY;
+		
+		private System.Nullable<int> _BounceLocZ;
+		
+		private System.Nullable<int> _BounceWLocX;
+		
+		private System.Nullable<int> _BounceWLocY;
+		
+		private System.Nullable<int> _BounceWLocZ;
+		
+		private System.Nullable<int> _BounceParentSerial;
+		
+		private System.Nullable<bool> _BounceParentType;
+		
+		private System.Nullable<byte> _m_LootType;
+		
+		private System.Nullable<int> _LocX;
+		
+		private System.Nullable<int> _LocY;
+		
+		private System.Nullable<int> _LocZ;
+		
+		private System.Nullable<int> _ItemID;
+		
+		private System.Nullable<int> _m_Hue;
+		
+		private System.Nullable<int> _m_Amount;
+		
+		private System.Nullable<byte> _m_Layer;
+		
+		private string _m_Name;
+		
+		private System.Nullable<int> _m_Parent;
+		
+		private System.Nullable<bool> _ParentType;
+		
+		private string _m_Items;
+		
+		private System.Nullable<double> _m_Weight;
+		
+		private System.Nullable<byte> _m_Map;
+		
+		private System.Nullable<int> _m_BlessedFor;
+		
+		private System.Nullable<int> _m_HeldBy;
+		
+		private System.Nullable<int> _m_SavedFlags;
+		
+		private string _m_Description;
+		
+		private System.Nullable<byte> _m_Direction;
+		
+		private System.Nullable<int> _flags;
+		
+		private System.Nullable<bool> _m_Visible;
+		
+		private System.Nullable<bool> _m_Movable;
+		
+		private System.Nullable<bool> _m_Stackable;
+		
+		private System.Nullable<int> _m_ImplFlags;
+		
+		private string _strim;
+		
+		private EntityRef<Mobile> _Mobile;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIdChanging(long value);
+    partial void OnIdChanged();
+    partial void OnTypeIDChanging(System.Nullable<int> value);
+    partial void OnTypeIDChanged();
+    partial void OnSerialChanging(System.Nullable<int> value);
+    partial void OnSerialChanged();
+    partial void OnBounceMapChanging(System.Nullable<byte> value);
+    partial void OnBounceMapChanged();
+    partial void OnBounceLocXChanging(System.Nullable<int> value);
+    partial void OnBounceLocXChanged();
+    partial void OnBounceLocYChanging(System.Nullable<int> value);
+    partial void OnBounceLocYChanged();
+    partial void OnBounceLocZChanging(System.Nullable<int> value);
+    partial void OnBounceLocZChanged();
+    partial void OnBounceWLocXChanging(System.Nullable<int> value);
+    partial void OnBounceWLocXChanged();
+    partial void OnBounceWLocYChanging(System.Nullable<int> value);
+    partial void OnBounceWLocYChanged();
+    partial void OnBounceWLocZChanging(System.Nullable<int> value);
+    partial void OnBounceWLocZChanged();
+    partial void OnBounceParentSerialChanging(System.Nullable<int> value);
+    partial void OnBounceParentSerialChanged();
+    partial void OnBounceParentTypeChanging(System.Nullable<bool> value);
+    partial void OnBounceParentTypeChanged();
+    partial void Onm_LootTypeChanging(System.Nullable<byte> value);
+    partial void Onm_LootTypeChanged();
+    partial void OnLocXChanging(System.Nullable<int> value);
+    partial void OnLocXChanged();
+    partial void OnLocYChanging(System.Nullable<int> value);
+    partial void OnLocYChanged();
+    partial void OnLocZChanging(System.Nullable<int> value);
+    partial void OnLocZChanged();
+    partial void OnItemIDChanging(System.Nullable<int> value);
+    partial void OnItemIDChanged();
+    partial void Onm_HueChanging(System.Nullable<int> value);
+    partial void Onm_HueChanged();
+    partial void Onm_AmountChanging(System.Nullable<int> value);
+    partial void Onm_AmountChanged();
+    partial void Onm_LayerChanging(System.Nullable<byte> value);
+    partial void Onm_LayerChanged();
+    partial void Onm_NameChanging(string value);
+    partial void Onm_NameChanged();
+    partial void Onm_ParentChanging(System.Nullable<int> value);
+    partial void Onm_ParentChanged();
+    partial void OnParentTypeChanging(System.Nullable<bool> value);
+    partial void OnParentTypeChanged();
+    partial void Onm_ItemsChanging(string value);
+    partial void Onm_ItemsChanged();
+    partial void Onm_WeightChanging(System.Nullable<double> value);
+    partial void Onm_WeightChanged();
+    partial void Onm_MapChanging(System.Nullable<byte> value);
+    partial void Onm_MapChanged();
+    partial void Onm_BlessedForChanging(System.Nullable<int> value);
+    partial void Onm_BlessedForChanged();
+    partial void Onm_HeldByChanging(System.Nullable<int> value);
+    partial void Onm_HeldByChanged();
+    partial void Onm_SavedFlagsChanging(System.Nullable<int> value);
+    partial void Onm_SavedFlagsChanged();
+    partial void Onm_DescriptionChanging(string value);
+    partial void Onm_DescriptionChanged();
+    partial void Onm_DirectionChanging(System.Nullable<byte> value);
+    partial void Onm_DirectionChanged();
+    partial void OnflagsChanging(System.Nullable<int> value);
+    partial void OnflagsChanged();
+    partial void Onm_VisibleChanging(System.Nullable<bool> value);
+    partial void Onm_VisibleChanged();
+    partial void Onm_MovableChanging(System.Nullable<bool> value);
+    partial void Onm_MovableChanged();
+    partial void Onm_StackableChanging(System.Nullable<bool> value);
+    partial void Onm_StackableChanged();
+    partial void Onm_ImplFlagsChanging(System.Nullable<int> value);
+    partial void Onm_ImplFlagsChanged();
+    partial void OnstrimChanging(string value);
+    partial void OnstrimChanged();
+    #endregion
+		
+		public Item()
+		{
+			this._Mobile = default(EntityRef<Mobile>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", DbType="BigInt NOT NULL", IsPrimaryKey=true)]
+		public long Id
+		{
+			get
+			{
+				return this._Id;
+			}
+			set
+			{
+				if ((this._Id != value))
+				{
+					this.OnIdChanging(value);
+					this.SendPropertyChanging();
+					this._Id = value;
+					this.SendPropertyChanged("Id");
+					this.OnIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TypeID", DbType="Int")]
+		public System.Nullable<int> TypeID
+		{
+			get
+			{
+				return this._TypeID;
+			}
+			set
+			{
+				if ((this._TypeID != value))
+				{
+					this.OnTypeIDChanging(value);
+					this.SendPropertyChanging();
+					this._TypeID = value;
+					this.SendPropertyChanged("TypeID");
+					this.OnTypeIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Serial", DbType="Int")]
+		public System.Nullable<int> Serial
+		{
+			get
+			{
+				return this._Serial;
+			}
+			set
+			{
+				if ((this._Serial != value))
+				{
+					this.OnSerialChanging(value);
+					this.SendPropertyChanging();
+					this._Serial = value;
+					this.SendPropertyChanged("Serial");
+					this.OnSerialChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BounceMap", DbType="TinyInt")]
+		public System.Nullable<byte> BounceMap
+		{
+			get
+			{
+				return this._BounceMap;
+			}
+			set
+			{
+				if ((this._BounceMap != value))
+				{
+					this.OnBounceMapChanging(value);
+					this.SendPropertyChanging();
+					this._BounceMap = value;
+					this.SendPropertyChanged("BounceMap");
+					this.OnBounceMapChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BounceLocX", DbType="Int")]
+		public System.Nullable<int> BounceLocX
+		{
+			get
+			{
+				return this._BounceLocX;
+			}
+			set
+			{
+				if ((this._BounceLocX != value))
+				{
+					this.OnBounceLocXChanging(value);
+					this.SendPropertyChanging();
+					this._BounceLocX = value;
+					this.SendPropertyChanged("BounceLocX");
+					this.OnBounceLocXChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BounceLocY", DbType="Int")]
+		public System.Nullable<int> BounceLocY
+		{
+			get
+			{
+				return this._BounceLocY;
+			}
+			set
+			{
+				if ((this._BounceLocY != value))
+				{
+					this.OnBounceLocYChanging(value);
+					this.SendPropertyChanging();
+					this._BounceLocY = value;
+					this.SendPropertyChanged("BounceLocY");
+					this.OnBounceLocYChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BounceLocZ", DbType="Int")]
+		public System.Nullable<int> BounceLocZ
+		{
+			get
+			{
+				return this._BounceLocZ;
+			}
+			set
+			{
+				if ((this._BounceLocZ != value))
+				{
+					this.OnBounceLocZChanging(value);
+					this.SendPropertyChanging();
+					this._BounceLocZ = value;
+					this.SendPropertyChanged("BounceLocZ");
+					this.OnBounceLocZChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BounceWLocX", DbType="Int")]
+		public System.Nullable<int> BounceWLocX
+		{
+			get
+			{
+				return this._BounceWLocX;
+			}
+			set
+			{
+				if ((this._BounceWLocX != value))
+				{
+					this.OnBounceWLocXChanging(value);
+					this.SendPropertyChanging();
+					this._BounceWLocX = value;
+					this.SendPropertyChanged("BounceWLocX");
+					this.OnBounceWLocXChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BounceWLocY", DbType="Int")]
+		public System.Nullable<int> BounceWLocY
+		{
+			get
+			{
+				return this._BounceWLocY;
+			}
+			set
+			{
+				if ((this._BounceWLocY != value))
+				{
+					this.OnBounceWLocYChanging(value);
+					this.SendPropertyChanging();
+					this._BounceWLocY = value;
+					this.SendPropertyChanged("BounceWLocY");
+					this.OnBounceWLocYChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BounceWLocZ", DbType="Int")]
+		public System.Nullable<int> BounceWLocZ
+		{
+			get
+			{
+				return this._BounceWLocZ;
+			}
+			set
+			{
+				if ((this._BounceWLocZ != value))
+				{
+					this.OnBounceWLocZChanging(value);
+					this.SendPropertyChanging();
+					this._BounceWLocZ = value;
+					this.SendPropertyChanged("BounceWLocZ");
+					this.OnBounceWLocZChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BounceParentSerial", DbType="Int")]
+		public System.Nullable<int> BounceParentSerial
+		{
+			get
+			{
+				return this._BounceParentSerial;
+			}
+			set
+			{
+				if ((this._BounceParentSerial != value))
+				{
+					this.OnBounceParentSerialChanging(value);
+					this.SendPropertyChanging();
+					this._BounceParentSerial = value;
+					this.SendPropertyChanged("BounceParentSerial");
+					this.OnBounceParentSerialChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BounceParentType", DbType="Bit")]
+		public System.Nullable<bool> BounceParentType
+		{
+			get
+			{
+				return this._BounceParentType;
+			}
+			set
+			{
+				if ((this._BounceParentType != value))
+				{
+					this.OnBounceParentTypeChanging(value);
+					this.SendPropertyChanging();
+					this._BounceParentType = value;
+					this.SendPropertyChanged("BounceParentType");
+					this.OnBounceParentTypeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_LootType", DbType="TinyInt")]
+		public System.Nullable<byte> m_LootType
+		{
+			get
+			{
+				return this._m_LootType;
+			}
+			set
+			{
+				if ((this._m_LootType != value))
+				{
+					this.Onm_LootTypeChanging(value);
+					this.SendPropertyChanging();
+					this._m_LootType = value;
+					this.SendPropertyChanged("m_LootType");
+					this.Onm_LootTypeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LocX", DbType="Int")]
+		public System.Nullable<int> LocX
+		{
+			get
+			{
+				return this._LocX;
+			}
+			set
+			{
+				if ((this._LocX != value))
+				{
+					this.OnLocXChanging(value);
+					this.SendPropertyChanging();
+					this._LocX = value;
+					this.SendPropertyChanged("LocX");
+					this.OnLocXChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LocY", DbType="Int")]
+		public System.Nullable<int> LocY
+		{
+			get
+			{
+				return this._LocY;
+			}
+			set
+			{
+				if ((this._LocY != value))
+				{
+					this.OnLocYChanging(value);
+					this.SendPropertyChanging();
+					this._LocY = value;
+					this.SendPropertyChanged("LocY");
+					this.OnLocYChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LocZ", DbType="Int")]
+		public System.Nullable<int> LocZ
+		{
+			get
+			{
+				return this._LocZ;
+			}
+			set
+			{
+				if ((this._LocZ != value))
+				{
+					this.OnLocZChanging(value);
+					this.SendPropertyChanging();
+					this._LocZ = value;
+					this.SendPropertyChanged("LocZ");
+					this.OnLocZChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ItemID", DbType="Int")]
+		public System.Nullable<int> ItemID
+		{
+			get
+			{
+				return this._ItemID;
+			}
+			set
+			{
+				if ((this._ItemID != value))
+				{
+					this.OnItemIDChanging(value);
+					this.SendPropertyChanging();
+					this._ItemID = value;
+					this.SendPropertyChanged("ItemID");
+					this.OnItemIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Hue", DbType="Int")]
+		public System.Nullable<int> m_Hue
+		{
+			get
+			{
+				return this._m_Hue;
+			}
+			set
+			{
+				if ((this._m_Hue != value))
+				{
+					this.Onm_HueChanging(value);
+					this.SendPropertyChanging();
+					this._m_Hue = value;
+					this.SendPropertyChanged("m_Hue");
+					this.Onm_HueChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Amount", DbType="Int")]
+		public System.Nullable<int> m_Amount
+		{
+			get
+			{
+				return this._m_Amount;
+			}
+			set
+			{
+				if ((this._m_Amount != value))
+				{
+					this.Onm_AmountChanging(value);
+					this.SendPropertyChanging();
+					this._m_Amount = value;
+					this.SendPropertyChanged("m_Amount");
+					this.Onm_AmountChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Layer", DbType="TinyInt")]
+		public System.Nullable<byte> m_Layer
+		{
+			get
+			{
+				return this._m_Layer;
+			}
+			set
+			{
+				if ((this._m_Layer != value))
+				{
+					this.Onm_LayerChanging(value);
+					this.SendPropertyChanging();
+					this._m_Layer = value;
+					this.SendPropertyChanged("m_Layer");
+					this.Onm_LayerChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Name", DbType="VarChar(MAX)")]
+		public string m_Name
+		{
+			get
+			{
+				return this._m_Name;
+			}
+			set
+			{
+				if ((this._m_Name != value))
+				{
+					this.Onm_NameChanging(value);
+					this.SendPropertyChanging();
+					this._m_Name = value;
+					this.SendPropertyChanged("m_Name");
+					this.Onm_NameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Parent", DbType="Int")]
+		public System.Nullable<int> m_Parent
+		{
+			get
+			{
+				return this._m_Parent;
+			}
+			set
+			{
+				if ((this._m_Parent != value))
+				{
+					if (this._Mobile.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.Onm_ParentChanging(value);
+					this.SendPropertyChanging();
+					this._m_Parent = value;
+					this.SendPropertyChanged("m_Parent");
+					this.Onm_ParentChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ParentType", DbType="Bit")]
+		public System.Nullable<bool> ParentType
+		{
+			get
+			{
+				return this._ParentType;
+			}
+			set
+			{
+				if ((this._ParentType != value))
+				{
+					this.OnParentTypeChanging(value);
+					this.SendPropertyChanging();
+					this._ParentType = value;
+					this.SendPropertyChanged("ParentType");
+					this.OnParentTypeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Items", DbType="VarChar(MAX)")]
+		public string m_Items
+		{
+			get
+			{
+				return this._m_Items;
+			}
+			set
+			{
+				if ((this._m_Items != value))
+				{
+					this.Onm_ItemsChanging(value);
+					this.SendPropertyChanging();
+					this._m_Items = value;
+					this.SendPropertyChanged("m_Items");
+					this.Onm_ItemsChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Weight", DbType="Float")]
+		public System.Nullable<double> m_Weight
+		{
+			get
+			{
+				return this._m_Weight;
+			}
+			set
+			{
+				if ((this._m_Weight != value))
+				{
+					this.Onm_WeightChanging(value);
+					this.SendPropertyChanging();
+					this._m_Weight = value;
+					this.SendPropertyChanged("m_Weight");
+					this.Onm_WeightChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Map", DbType="TinyInt")]
+		public System.Nullable<byte> m_Map
+		{
+			get
+			{
+				return this._m_Map;
+			}
+			set
+			{
+				if ((this._m_Map != value))
+				{
+					this.Onm_MapChanging(value);
+					this.SendPropertyChanging();
+					this._m_Map = value;
+					this.SendPropertyChanged("m_Map");
+					this.Onm_MapChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_BlessedFor", DbType="Int")]
+		public System.Nullable<int> m_BlessedFor
+		{
+			get
+			{
+				return this._m_BlessedFor;
+			}
+			set
+			{
+				if ((this._m_BlessedFor != value))
+				{
+					this.Onm_BlessedForChanging(value);
+					this.SendPropertyChanging();
+					this._m_BlessedFor = value;
+					this.SendPropertyChanged("m_BlessedFor");
+					this.Onm_BlessedForChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_HeldBy", DbType="Int")]
+		public System.Nullable<int> m_HeldBy
+		{
+			get
+			{
+				return this._m_HeldBy;
+			}
+			set
+			{
+				if ((this._m_HeldBy != value))
+				{
+					this.Onm_HeldByChanging(value);
+					this.SendPropertyChanging();
+					this._m_HeldBy = value;
+					this.SendPropertyChanged("m_HeldBy");
+					this.Onm_HeldByChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_SavedFlags", DbType="Int")]
+		public System.Nullable<int> m_SavedFlags
+		{
+			get
+			{
+				return this._m_SavedFlags;
+			}
+			set
+			{
+				if ((this._m_SavedFlags != value))
+				{
+					this.Onm_SavedFlagsChanging(value);
+					this.SendPropertyChanging();
+					this._m_SavedFlags = value;
+					this.SendPropertyChanged("m_SavedFlags");
+					this.Onm_SavedFlagsChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Description", DbType="VarChar(MAX)")]
+		public string m_Description
+		{
+			get
+			{
+				return this._m_Description;
+			}
+			set
+			{
+				if ((this._m_Description != value))
+				{
+					this.Onm_DescriptionChanging(value);
+					this.SendPropertyChanging();
+					this._m_Description = value;
+					this.SendPropertyChanged("m_Description");
+					this.Onm_DescriptionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Direction", DbType="TinyInt")]
+		public System.Nullable<byte> m_Direction
+		{
+			get
+			{
+				return this._m_Direction;
+			}
+			set
+			{
+				if ((this._m_Direction != value))
+				{
+					this.Onm_DirectionChanging(value);
+					this.SendPropertyChanging();
+					this._m_Direction = value;
+					this.SendPropertyChanged("m_Direction");
+					this.Onm_DirectionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_flags", DbType="Int")]
+		public System.Nullable<int> flags
+		{
+			get
+			{
+				return this._flags;
+			}
+			set
+			{
+				if ((this._flags != value))
+				{
+					this.OnflagsChanging(value);
+					this.SendPropertyChanging();
+					this._flags = value;
+					this.SendPropertyChanged("flags");
+					this.OnflagsChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Visible", DbType="Bit")]
+		public System.Nullable<bool> m_Visible
+		{
+			get
+			{
+				return this._m_Visible;
+			}
+			set
+			{
+				if ((this._m_Visible != value))
+				{
+					this.Onm_VisibleChanging(value);
+					this.SendPropertyChanging();
+					this._m_Visible = value;
+					this.SendPropertyChanged("m_Visible");
+					this.Onm_VisibleChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Movable", DbType="Bit")]
+		public System.Nullable<bool> m_Movable
+		{
+			get
+			{
+				return this._m_Movable;
+			}
+			set
+			{
+				if ((this._m_Movable != value))
+				{
+					this.Onm_MovableChanging(value);
+					this.SendPropertyChanging();
+					this._m_Movable = value;
+					this.SendPropertyChanged("m_Movable");
+					this.Onm_MovableChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_Stackable", DbType="Bit")]
+		public System.Nullable<bool> m_Stackable
+		{
+			get
+			{
+				return this._m_Stackable;
+			}
+			set
+			{
+				if ((this._m_Stackable != value))
+				{
+					this.Onm_StackableChanging(value);
+					this.SendPropertyChanging();
+					this._m_Stackable = value;
+					this.SendPropertyChanged("m_Stackable");
+					this.Onm_StackableChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_m_ImplFlags", DbType="Int")]
+		public System.Nullable<int> m_ImplFlags
+		{
+			get
+			{
+				return this._m_ImplFlags;
+			}
+			set
+			{
+				if ((this._m_ImplFlags != value))
+				{
+					this.Onm_ImplFlagsChanging(value);
+					this.SendPropertyChanging();
+					this._m_ImplFlags = value;
+					this.SendPropertyChanged("m_ImplFlags");
+					this.Onm_ImplFlagsChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_strim", DbType="VarChar(MAX)")]
+		public string strim
+		{
+			get
+			{
+				return this._strim;
+			}
+			set
+			{
+				if ((this._strim != value))
+				{
+					this.OnstrimChanging(value);
+					this.SendPropertyChanging();
+					this._strim = value;
+					this.SendPropertyChanged("strim");
+					this.OnstrimChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mobile_Item", Storage="_Mobile", ThisKey="m_Parent", OtherKey="Id", IsForeignKey=true)]
+		public Mobile Mobile
+		{
+			get
+			{
+				return this._Mobile.Entity;
+			}
+			set
+			{
+				Mobile previousValue = this._Mobile.Entity;
+				if (((previousValue != value) 
+							|| (this._Mobile.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Mobile.Entity = null;
+						previousValue.Items.Remove(this);
+					}
+					this._Mobile.Entity = value;
+					if ((value != null))
+					{
+						value.Items.Add(this);
+						this._m_Parent = value.Id;
+					}
+					else
+					{
+						this._m_Parent = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("Mobile");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
 		}
 	}
 }

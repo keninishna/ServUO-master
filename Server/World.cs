@@ -112,6 +112,9 @@ namespace Server
         public static List<Database.Skill> SQLSkills { get; set; }
         public static List<Database.MobIndex> SQLmindex { get; set; }
         public static List<Database.Item> SQLitemlist { get; set; }
+        public static List<Database.Guild> SQLGuildlist { get; set; }
+        public static List<Database.GuildWar> SQLGuildWars { get; set; }
+        public static List<Database.GuildAlliance> SQLGuildAlliances { get; set; }
         public static List<Database.ItemIndex> SQLitemindex { get; set; }
 
 
@@ -1168,7 +1171,7 @@ namespace Server
         {
             Stopwatch watch = Stopwatch.StartNew();
             List<Database.Mobile> v = new List<Database.Mobile>();
-            using (Database.UODataContext readdb = new Database.UODataContext())
+            using (Database.UODataContext readdb = new Database.UODataContext() { CommandTimeout = 30, ObjectTrackingEnabled = false })
             {
                 var mobs = (from x in readdb.Mobiles select x); //google no help
                 if (mobs != null)
@@ -1225,6 +1228,55 @@ namespace Server
             return s;
         }
 
+        private static List<Database.GuildAlliance> LoadGuildAllianceSQL()
+        {
+            List<Database.GuildAlliance> s = new List<Database.GuildAlliance>();
+            using (Database.UODataContext readdb = new Database.UODataContext())
+            {
+
+                var dbGuildAlliances = (from x in readdb.GuildAlliances select x); //google no help
+
+                foreach (Database.GuildAlliance GuildAlliance in dbGuildAlliances)
+                {
+                    s.Add(GuildAlliance);
+                }
+            }
+            return s;
+        }
+
+        private static List<Database.Guild> LoadGuildsSQL()
+        {
+            List<Database.Guild> s = new List<Database.Guild>();
+            using (Database.UODataContext readdb = new Database.UODataContext())
+            {
+
+                var dbGuilds = (from x in readdb.Guilds select x); //google no help
+
+                foreach (Database.Guild dbGuild in dbGuilds)
+                {
+                    s.Add(dbGuild);
+                }
+            }
+            return s;
+        }
+
+        private static List<Database.GuildWar> LoadGuildWarsSQL()
+        {
+            List<Database.GuildWar> s = new List<Database.GuildWar>();
+            using (Database.UODataContext readdb = new Database.UODataContext())
+            {
+
+                var dbwars = (from x in readdb.GuildWars select x); //google no help
+
+                foreach (Database.GuildWar dbwar in dbwars)
+                {
+                    s.Add(dbwar);
+                }
+            }
+            return s;
+        }
+
+
         private static bool ProcessMobiles(List<Database.Mobile> v, List<MobileEntry> mobiles, List<Database.Skill> s)
         {
             Stopwatch watch = Stopwatch.StartNew();
@@ -1260,8 +1312,6 @@ namespace Server
                 reader.Close();
             }
 
-
-            watch.Stop();
             Console.WriteLine("ProcessMobs: " + watch.Elapsed.TotalSeconds);
             return false;
         }
@@ -1304,53 +1354,26 @@ namespace Server
             return false;
         }
 
-/* //trying multithreading i gave up
-private static bool ProcessItems(List<Database.Item> it, List<ItemEntry> items)
-{
-    int threads = 8;
-    List<BinaryFileReader> reader = new List<BinaryFileReader>(threads);
-    List<MemoryStream> bin = new List<MemoryStream>(threads);
-    int itemCount = items.Count();
-    int mod = 0;
-
-    int[] group = new int[threads];
-    group[0] = 0;
-    //do some maths
-    for (int i = 1; i < threads; i++)
-    {
-        group[i] = Math.Abs(itemCount / threads) * i;
-    }
-    Math.DivRem(itemCount, threads, out mod);
-    group[threads - 1] = group[threads - 1] + mod; //add remainder to the last thread'
-    List<ItemEntry> entry = new List<ItemEntry>(threads);
-    List<Item> item = new List<Item>(threads);
-    byte[][] byteArray;
-
-    //fire up some threads
-    Parallel.For(0, threads-1, index =>
-    {
-        for (int i = group[index]; i < group[index+1]; ++i)
+        private static bool ProcessGuilds(List<Database.Guild> dbg, List<GuildEntry> guilds)
         {
-            entry[index] = items[i];
-            item[index] = entry[index].Item;
-
-            byteArray[] = Convert.FromBase64String(it[i].strim);
-            bin[index] = new MemoryStream(byteArray]);
-            reader[index] = new BinaryFileReader(new BinaryReader(bin[index]));
-
-            m_LoadingType = entry[index].TypeName;
-            item[index].Deserialize(it[i]);
-            item[index].Deserialize(reader[index]);
+            Stopwatch watch = Stopwatch.StartNew();
+            for (int i = 0; i < guilds.Count; ++i)
+            {
+                Database.Guild gp = new Database.Guild();
+                GuildEntry entry = guilds[i];
+                BaseGuild g = entry.Guild;
+                gp = dbg[i];
+                if (g != null)
+                {
+                g.Deserialize(gp);
+                }
+            }
+            watch.Stop();
+            Console.WriteLine("ProccessItems: " + watch.Elapsed.TotalSeconds);
+            return false;
         }
-        bin[index].Close();
-        reader[index].Close();
-    });
 
-    return false;
-}
-*/
-
-public static void LoadSQL()
+        public static void LoadSQL()
         {
             if (m_Loaded)
             {
@@ -1383,6 +1406,9 @@ public static void LoadSQL()
             List<MobileEntry> mobiles = new List<MobileEntry>();
             List<ItemEntry> items = new List<ItemEntry>();
             List<Database.Skill> s = new List<Database.Skill>();
+            List<Database.Guild> g = new List<Database.Guild>();
+            List<Database.GuildAlliance> ga = new List<Database.GuildAlliance>();
+            List<Database.GuildWar> gw = new List<Database.GuildWar>();
 
             Parallel.Invoke(() =>
             {
@@ -1393,6 +1419,15 @@ public static void LoadSQL()
             }, () =>
             {
                 s = LoadSkillsSQL();
+            }, () =>
+            {
+                g = LoadGuildsSQL();
+            }, () =>
+            {
+                ga = LoadGuildAllianceSQL();
+            }, () =>
+            {
+                gw = LoadGuildWarsSQL();
             });
 
             itemCount = it.Count();
@@ -1409,34 +1444,25 @@ public static void LoadSQL()
             });
             
 
-            if (File.Exists(GuildIndexPath))
-            {
-                using (FileStream idx = new FileStream(GuildIndexPath, FileMode.Open, FileAccess.Read, FileShare.Read))
-                {
-                    BinaryReader idxReader = new BinaryReader(idx);
-
-                    guildCount = idxReader.ReadInt32();
+                guildCount = g.Count();
 
                     CreateGuildEventArgs createEventArgs = new CreateGuildEventArgs(-1);
-                    for (int i = 0; i < guildCount; ++i)
+                    foreach(Database.Guild a in g)
                     {
-                        idxReader.ReadInt32(); //no typeid for guilds
-                        int id = idxReader.ReadInt32();
-                        long pos = idxReader.ReadInt64();
-                        int length = idxReader.ReadInt32();
+
+                    int id = a.Id;
+
 
                         createEventArgs.Id = id;
                         EventSink.InvokeCreateGuild(createEventArgs);
                         BaseGuild guild = createEventArgs.Guild;
                         if (guild != null)
                         {
-                            guilds.Add(new GuildEntry(guild, pos, length));
+                            guilds.Add(new GuildEntry(guild, 0, 0));
                         }
                     }
 
-                    idxReader.Close();
-                }
-            }
+            
 
             if (File.Exists(DataIndexPath) && File.Exists(DataTypesPath))
             {
@@ -1503,11 +1529,11 @@ public static void LoadSQL()
 
             bool failedGuilds = false, failedData = false, failedMobiles = false, failedItems = false;
 
-                failedMobiles = ProcessMobiles(v, mobiles, s);
+            failedMobiles = ProcessMobiles(v, mobiles, s);
 
-                 failedItems = ProcessItems(it, items);
+            failedItems = ProcessItems(it, items);
 
-
+            failedGuilds = ProcessGuilds(g, guilds);
 
             
             Type failedType = null;
@@ -1518,51 +1544,6 @@ public static void LoadSQL()
 
 
             m_LoadingType = null;
-
-            if (!failedMobiles && !failedItems && File.Exists(GuildDataPath))
-            {
-                using (FileStream bin = new FileStream(GuildDataPath, FileMode.Open, FileAccess.Read, FileShare.Read))
-                {
-                    BinaryFileReader reader = new BinaryFileReader(new BinaryReader(bin));
-
-                    for (int i = 0; i < guilds.Count; ++i)
-                    {
-                        GuildEntry entry = guilds[i];
-                        BaseGuild g = entry.Guild;
-
-                        if (g != null)
-                        {
-                            reader.Seek(entry.Position, SeekOrigin.Begin);
-
-                            try
-                            {
-                                g.Deserialize(reader);
-
-                                if (reader.Position != (entry.Position + entry.Length))
-                                {
-                                    throw new Exception(String.Format("***** Bad serialize on Guild {0} *****", g.Id));
-                                }
-                            }
-                            catch (Exception e)
-                            {
-                                guilds.RemoveAt(i);
-
-                                failed = e;
-                                failedGuilds = true;
-                                failedType = typeof(BaseGuild);
-                                failedTypeID = g.Id;
-                                failedSerial = g.Id;
-
-                                break;
-                            }
-                        }
-                    }
-
-                    reader.Close();
-                }
-            }
-
-            
 
             if (!failedMobiles && !failedItems && !failedGuilds && File.Exists(DataBinaryPath))
             {
@@ -1934,58 +1915,11 @@ public static void LoadSQL()
 			Save(true, false);
 		}
 
-        public static void SaveSQL(bool message)
-        {
-            if (m_Saving)
-            {
-                return;
-            }
 
-            ++m_Saves;
-
-            NetState.FlushAll();
-            NetState.Pause();
-            if (message)
-            {
-                Broadcast(0x35, true, "The world is saving, please wait.");
-            }
-            Console.WriteLine("Core: Using SQL save strategy");
-            Console.WriteLine("World: Saving...");
-            Stopwatch watch = Stopwatch.StartNew();
-            SaveStrategy strategy = SaveStrategy.Acquire();
-
-            strategy.Save(null, false);
-            
-           
-            try
-            {
-                EventSink.InvokeWorldSave(new WorldSaveEventArgs(message));
-            }
-            catch (Exception e)
-            {
-                throw new Exception("World Save event threw an exception.  Save failed!", e);
-            }
-
-            watch.Stop();
-            m_Saving = false;
-
-            ProcessSafetyQueues();
-
-            strategy.ProcessDecay();
-
-            Console.WriteLine("Save finished in {0:F2} seconds.", watch.Elapsed.TotalSeconds);
-
-            if (message)
-            {
-                Broadcast(0x35, true, "World save complete. The entire process took {0:F1} seconds.", watch.Elapsed.TotalSeconds);
-            }
-            WriteSQL();
-            NetState.Resume();
-            
-        }
 
         private static void WriteSQL()
         {
+            Stopwatch watch = Stopwatch.StartNew();
             Console.WriteLine("SQL db write start");
             using (Database.UODataContext writedb = new Database.UODataContext())
             {
@@ -1994,15 +1928,18 @@ public static void LoadSQL()
                 Database.LinqExtension.Truncate(writedb.MobIndexes); //drop mobile index table
                 Database.LinqExtension.Truncate(writedb.ItemIndexes); //drop items table
                 Database.LinqExtension.Truncate(writedb.Items); //drop items table
+                Database.LinqExtension.Truncate(writedb.GuildAlliances); //drop items table
+                Database.LinqExtension.Truncate(writedb.Guilds); //drop items table
+                Database.LinqExtension.Truncate(writedb.GuildWars); //drop items table
                 Parallel.Invoke(() =>
                 {
                     writedb.BulkInsertAll(SQLmobs); //bulk insert mobs
-                    Console.WriteLine("Mobile DB write complete");
+                    Console.WriteLine("Mobile DB write complete " + watch.Elapsed.TotalSeconds);
                 },  // close first Action
                 () =>
                 {
                     writedb.BulkInsertAll(SQLSkills); //bulk insert skillz
-                    Console.WriteLine("Skills DB write complete");
+                    Console.WriteLine("Skills DB write complete " + +watch.Elapsed.TotalSeconds);
                 }, //close second Action
                 () =>
                 {
@@ -2011,15 +1948,28 @@ public static void LoadSQL()
                 () =>
                 {
                     writedb.BulkInsertAll(SQLitemlist); //bulk insert items
-                    Console.WriteLine("Item DB write complete");
+                    Console.WriteLine("Item DB write complete " + watch.Elapsed.TotalSeconds);
                 },
                 () =>
                 {
                     writedb.BulkInsertAll(SQLitemindex); //bulk insert items
+                },() =>
+                {
+                    writedb.BulkInsertAll(SQLGuildWars); //bulk insert items
+                    Console.WriteLine("GuildWars DB write complete " + watch.Elapsed.TotalSeconds);
+                }, () =>
+                {
+                    writedb.BulkInsertAll(SQLGuildlist); //bulk insert items
+                    Console.WriteLine("GuildList DB write complete " + watch.Elapsed.TotalSeconds);
+                }, () =>
+                {
+                    writedb.BulkInsertAll(SQLGuildAlliances); //bulk insert items
+                    Console.WriteLine("GuildAlliance DB write complete " + watch.Elapsed.TotalSeconds);
                 }); //close parallel.invoke
 
             }
-            Console.WriteLine("SQL db save complete");
+            watch.Stop();
+            Console.WriteLine("SQL db save complete " + +watch.Elapsed.TotalSeconds);
             
             SQLmobs = new List<Database.Mobile>();
             SQLSkills = new List<Database.Skill>();
@@ -2110,7 +2060,7 @@ public static void LoadSQL()
 			}
 
 			NetState.Resume();
-            WriteSQL();
+            if(Core.UseSQL) WriteSQL();
 
         }
 

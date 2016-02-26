@@ -46,9 +46,13 @@ namespace Server.Guilds
 		int ISerializable.SerialIdentity { get { return m_Id; } }
 
 		public abstract void Deserialize(GenericReader reader);
-		public abstract void Serialize(GenericWriter writer);
+        public abstract void Deserialize(Database.Guild g);
+        public abstract void Serialize(GenericWriter writer);
+        public abstract Database.Guild Serialize(Database.Guild g);
+        public abstract Database.GuildAlliance Serialize(Database.GuildAlliance g);
+        public abstract List<Database.GuildWar> Serialize(List<Database.GuildWar> g);
 
-		public abstract string Abbreviation { get; set; }
+        public abstract string Abbreviation { get; set; }
 		public abstract string Name { get; set; }
 		public abstract GuildType Type { get; set; }
 		public abstract bool Disbanded { get; }

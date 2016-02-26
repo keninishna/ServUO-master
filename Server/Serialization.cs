@@ -74,7 +74,7 @@ namespace Server
 		public abstract List<BaseGuild> ReadStrongGuildList();
 		public abstract List<T> ReadStrongGuildList<T>() where T : BaseGuild;
 
-		public abstract List<SaveData> ReadStrongDataList();
+        public abstract List<SaveData> ReadStrongDataList();
 		public abstract List<T> ReadStrongDataList<T>() where T : SaveData;
 
 		public abstract HashSet<Item> ReadItemSet();

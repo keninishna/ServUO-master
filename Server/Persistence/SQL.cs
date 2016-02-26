@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Drawing;
-
+using System.Diagnostics;
 
 namespace Server
 {
@@ -59,7 +59,8 @@ namespace Server
                 this.SaveItemsSQL();
             }, () =>
             {
-                this.SaveGuilds();
+                //    this.SaveGuilds();
+                this.SaveGuildsSQL();
             }, () =>
             {
                 this.SaveData();
@@ -84,12 +85,13 @@ namespace Server
 
         protected void SaveMobiles()
         {
+            Stopwatch watch = Stopwatch.StartNew();
             Dictionary<Serial, Mobile> mobiles = World.Mobiles;
             List<Database.Mobile> mobs = new List<Database.Mobile>();
             List<Database.Skill> vsk = new List<Database.Skill>();
             List<Database.MobIndex> mindex = new List<Database.MobIndex>();
             int skillid = 0;
-            //Parallel.ForEach(mobiles.Values, (m) =>
+
             foreach (Mobile m in mobiles.Values)
             {
                 var typename = m.GetType();
@@ -100,7 +102,6 @@ namespace Server
                 {
                     if (m.Skills[i] != null && m.Skills[i].Base != 0)
                     {
-
                         Database.Skill vskill = new Database.Skill();
                         skillid++;
                         vskill.Id = skillid;
@@ -274,71 +275,26 @@ namespace Server
             World.SQLmobs = mobs;
             World.SQLSkills = vsk;
 
-            Console.WriteLine("created mobile save data..");
+            watch.Stop();
+            Console.WriteLine("created mobile save data: " + watch.Elapsed.TotalSeconds);
         }
 
 
-        protected void SaveItems()
-        {
-            Dictionary<Serial, Item> items = World.Items;
-
-            GenericWriter idx;
-            GenericWriter tdb;
-            GenericWriter bin;
-
-            if (this.UseSequentialWriters)
-            {
-                idx = new BinaryFileWriter(World.ItemIndexPath, false);
-                tdb = new BinaryFileWriter(World.ItemTypesPath, false);
-                bin = new BinaryFileWriter(World.ItemDataPath, true);
-            }
-            else
-            {
-                idx = new AsyncWriter(World.ItemIndexPath, false);
-                tdb = new AsyncWriter(World.ItemTypesPath, false);
-                bin = new AsyncWriter(World.ItemDataPath, true);
-            }
-
-            idx.Write((int)items.Count);
-            foreach (Item item in items.Values)
-            {
-                if (item.Decays && item.Parent == null && item.Map != Map.Internal && (item.LastMoved + item.DecayTime) <= DateTime.UtcNow)
-                {
-                    this._decayQueue.Enqueue(item);
-                }
-
-                long start = bin.Position;
-
-                idx.Write((int)item.m_TypeRef);
-                idx.Write((int)item.Serial);
-                idx.Write((long)start);
-
-                item.Serialize(bin);
-
-                idx.Write((int)(bin.Position - start));
-
-                item.FreeCache();
-            }
-
-            tdb.Write((int)World.m_ItemTypes.Count);
-            for (int i = 0; i < World.m_ItemTypes.Count; ++i)
-                tdb.Write(World.m_ItemTypes[i].FullName);
-
-            idx.Close();
-            tdb.Close();
-            bin.Close();
-        }
-        
         protected void SaveItemsSQL()
         {
+            Stopwatch watch = Stopwatch.StartNew();
             Dictionary<Serial, Item> items = World.Items;
             List<Database.Item> itemlist = new List<Database.Item>();
             List<Database.ItemIndex> itemindex = new List<Database.ItemIndex>();
 
-           // Parallel.ForEach(items.Values, (item) =>
-           foreach(Item item in items.Values)
-            {
+            int itemCount = items.Count;
+            World.SQLitemlist = new List<Database.Item>(itemCount);
 
+
+            
+            foreach (Item item in items.Values)
+            {
+                
                 MemoryStream strim = new MemoryStream();
                 GenericWriter bin = new BinaryFileWriter(strim, true);
                 if (item.Decays && item.Parent == null && item.Map != Map.Internal && (item.LastMoved + item.DecayTime) <= DateTime.UtcNow)
@@ -351,6 +307,7 @@ namespace Server
                 t.TypeID = item.m_TypeRef;
                 t.Serial = item.Serial.Value;
                 t.Id = item.Serial.Value;
+              
                 t = item.Serialize(t);
                 item.Serialize(bin);
                 bin.Close();
@@ -372,9 +329,36 @@ namespace Server
 
             World.SQLitemindex = itemindex;
             World.SQLitemlist = itemlist;
-            Console.WriteLine("SQL Item data created..");
+            watch.Stop();
+            Console.WriteLine("SQL Item data created: " + watch.Elapsed.TotalSeconds);
         }
-    
+
+        protected void SaveGuildsSQL()
+        {
+            List<Database.Guild> GuildList = new List<Database.Guild>();
+            List<Database.GuildWar> WarList = new List<Database.GuildWar>();
+            List<Database.GuildAlliance> GuildAlliances = new List<Database.GuildAlliance>();
+            foreach (BaseGuild guild in BaseGuild.List.Values)
+            {
+                List<Database.GuildWar> gwl = new List<Database.GuildWar>();
+                Database.Guild g = new Database.Guild();
+                Database.GuildAlliance ga = new Database.GuildAlliance();
+                g.Id = guild.Id;
+
+                g = guild.Serialize(g);
+                GuildList.Add(g);
+                gwl = guild.Serialize(gwl);
+                WarList.AddRange(gwl);
+                ga = guild.Serialize(ga);
+                GuildAlliances.Add(ga);
+            }
+
+            World.SQLGuildAlliances = GuildAlliances;
+            World.SQLGuildlist = GuildList;
+            World.SQLGuildWars = WarList;
+           
+        }
+
 
         protected void SaveGuilds()
         {
