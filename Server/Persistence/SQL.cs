@@ -50,22 +50,52 @@ namespace Server
 
         public override void Save(SaveMetrics metrics, bool permitBackgroundWrite)
         {
-            Console.WriteLine("");
-            Parallel.Invoke(() =>
+            if (permitBackgroundWrite)
             {
-                this.SaveMobiles();
-            }, () =>
+                Parallel.Invoke(() =>
+                {
+                    this.SaveMobiles();
+                }, () =>
+                {
+                    this.SaveItemsSQL();
+                }, () =>
+                {
+                    this.SaveGuildsSQL();
+                }, () =>
+                {
+                    this.SaveData();
+                });
+                World.BuffItems.Clear();
+                World.BuffMobiles.Clear();
+            }
+            else
             {
-                this.SaveItemsSQL();
-            }, () =>
-            {
-                //    this.SaveGuilds();
-                this.SaveGuildsSQL();
-            }, () =>
-            {
-                this.SaveData();
-            });
-            //this.SaveItems();
+                Stopwatch watch = Stopwatch.StartNew();
+                World.BuffMobiles = new List<Mobile>();
+                World.BuffItems = new List<Item>();
+                World.BuffGuild = new List<BaseGuild>();
+                Console.WriteLine("");
+                Parallel.Invoke(() =>
+                {
+                    foreach (Mobile m in World.Mobiles.Values)
+                    {
+                        World.BuffMobiles.Add(m);
+                    }
+                }, () =>
+                {
+                    foreach(Item i in World.Items.Values)
+                    {
+                        World.BuffItems.Add(i);
+                    }
+                }, () =>
+                {
+                    foreach (BaseGuild g in BaseGuild.List.Values)
+                    {
+                        World.BuffGuild.Add(g);
+                    }
+                });
+                Console.WriteLine("Buffer created: " + watch.Elapsed.TotalSeconds);
+            }
 
         }
 
@@ -92,7 +122,7 @@ namespace Server
             List<Database.MobIndex> mindex = new List<Database.MobIndex>();
             int skillid = 0;
 
-            foreach (Mobile m in mobiles.Values)
+            foreach (Mobile m in World.BuffMobiles)
             {
                 var typename = m.GetType();
 
@@ -160,7 +190,7 @@ namespace Server
                 v.m_Locationz = m.Location.Z;
                 v.m_MagicDamageAbsorb = m.MagicDamageAbsorb;
                 v.m_Mana = m.Mana;
-                v.m_Map = (byte)m.Map.MapIndex;
+                if(m.Map != null) v.m_Map = (byte)m.Map.MapIndex;
                 v.m_Name = m.Name;
                 v.m_NameHue = m.NameHue;
                 v.m_Player = m.Player;
@@ -260,22 +290,26 @@ namespace Server
                 mobs.Add(v);
                 m.FreeCache();
             }
-
+            
             for (int i = 0; i < World.m_MobileTypes.Count; ++i) { 
 
             Database.MobIndex a = new Database.MobIndex();
 
                 a.MobTypes = (World.m_MobileTypes[i].FullName);
                 a.Id = i;
-
                 mindex.Add(a);
             }
 
-            World.SQLmindex = mindex;
-            World.SQLmobs = mobs;
-            World.SQLSkills = vsk;
-
-            watch.Stop();
+            using (Database.UODataContext writedb = new Database.UODataContext())
+            {
+                Database.LinqExtension.Truncate(writedb.Mobiles); //drop mobiles table
+                Database.LinqExtension.Truncate(writedb.Skills); //drop skills table
+                Database.LinqExtension.Truncate(writedb.MobIndexes); //drop mobile index table
+                writedb.BulkInsertAll(mobs); //bulk insert mobs
+                writedb.BulkInsertAll(vsk); //bulk insert skillz
+                writedb.BulkInsertAll(mindex);
+            }
+                watch.Stop();
             Console.WriteLine("created mobile save data: " + watch.Elapsed.TotalSeconds);
         }
 
@@ -288,11 +322,9 @@ namespace Server
             List<Database.ItemIndex> itemindex = new List<Database.ItemIndex>();
 
             int itemCount = items.Count;
-            World.SQLitemlist = new List<Database.Item>(itemCount);
-
-
             
-            foreach (Item item in items.Values)
+
+            foreach (Item item in World.BuffItems)
             {
                 
                 MemoryStream strim = new MemoryStream();
@@ -327,18 +359,27 @@ namespace Server
                 itemindex.Add(a);
             }
 
-            World.SQLitemindex = itemindex;
-            World.SQLitemlist = itemlist;
+            using (Database.UODataContext writedb = new Database.UODataContext())
+            {
+                Database.LinqExtension.Truncate(writedb.ItemIndexes); //drop items table
+                Database.LinqExtension.Truncate(writedb.Items); //drop items table
+                writedb.BulkInsertAll(itemindex); //bulk insert itemindex
+                writedb.BulkInsertAll(itemlist); //bulk insert items
+            }
+
             watch.Stop();
             Console.WriteLine("SQL Item data created: " + watch.Elapsed.TotalSeconds);
         }
 
         protected void SaveGuildsSQL()
         {
+            Stopwatch watch = Stopwatch.StartNew();
             List<Database.Guild> GuildList = new List<Database.Guild>();
             List<Database.GuildWar> WarList = new List<Database.GuildWar>();
             List<Database.GuildAlliance> GuildAlliances = new List<Database.GuildAlliance>();
-            foreach (BaseGuild guild in BaseGuild.List.Values)
+            int index = 0;
+
+            foreach (BaseGuild guild in World.BuffGuild)
             {
                 List<Database.GuildWar> gwl = new List<Database.GuildWar>();
                 Database.Guild g = new Database.Guild();
@@ -347,46 +388,23 @@ namespace Server
 
                 g = guild.Serialize(g);
                 GuildList.Add(g);
-                gwl = guild.Serialize(gwl);
-                WarList.AddRange(gwl);
+                gwl = guild.Serialize(gwl,ref index);
+                if(gwl != null ) WarList.AddRange(gwl);
                 ga = guild.Serialize(ga);
-                GuildAlliances.Add(ga);
+                if(ga != null) GuildAlliances.Add(ga);
             }
 
-            World.SQLGuildAlliances = GuildAlliances;
-            World.SQLGuildlist = GuildList;
-            World.SQLGuildWars = WarList;
-           
-        }
-
-
-        protected void SaveGuilds()
-        {
-            GenericWriter idx;
-            GenericWriter bin;
-
-
-                idx = new AsyncWriter(World.GuildIndexPath, false);
-                bin = new AsyncWriter(World.GuildDataPath, true);
-            
-
-            idx.Write((int)BaseGuild.List.Count);
-            foreach (BaseGuild guild in BaseGuild.List.Values)
+            using (Database.UODataContext writedb = new Database.UODataContext())
             {
-                long start = bin.Position;
-
-                idx.Write((int)0);//guilds have no typeid
-                idx.Write((int)guild.Id);
-                idx.Write((long)start);
-
-                guild.Serialize(bin);
-
-
-                idx.Write((int)(bin.Position - start));
+                Database.LinqExtension.Truncate(writedb.GuildAlliances); //drop items table
+                Database.LinqExtension.Truncate(writedb.Guilds); //drop items table
+                Database.LinqExtension.Truncate(writedb.GuildWars); //drop items table
+                writedb.BulkInsertAll(GuildAlliances); //bulk insert items
+                writedb.BulkInsertAll(GuildList); //bulk insert items
+                writedb.BulkInsertAll(WarList); //bulk insert items
             }
-
-            idx.Close();
-            bin.Close();
+            watch.Stop();
+            Console.WriteLine("SQL Guild data created: " + watch.Elapsed.TotalSeconds);
         }
 
         protected void SaveData()

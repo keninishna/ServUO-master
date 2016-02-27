@@ -47,10 +47,13 @@ namespace Server.Guilds
 
 		public abstract void Deserialize(GenericReader reader);
         public abstract void Deserialize(Database.Guild g);
+        public abstract void Deserialize(List<Database.GuildWar> g);
+        public abstract void Deserialize(List<Database.GuildAlliance> g);
+
         public abstract void Serialize(GenericWriter writer);
         public abstract Database.Guild Serialize(Database.Guild g);
         public abstract Database.GuildAlliance Serialize(Database.GuildAlliance g);
-        public abstract List<Database.GuildWar> Serialize(List<Database.GuildWar> g);
+        public abstract List<Database.GuildWar> Serialize(List<Database.GuildWar> g,ref int index);
 
         public abstract string Abbreviation { get; set; }
 		public abstract string Name { get; set; }

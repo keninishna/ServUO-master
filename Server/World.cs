@@ -108,21 +108,15 @@ namespace Server
 			m_DiskWriteHandle.WaitOne();
 		}
 
-        public static List<Database.Mobile> SQLmobs { get; set; }
-        public static List<Database.Skill> SQLSkills { get; set; }
-        public static List<Database.MobIndex> SQLmindex { get; set; }
-        public static List<Database.Item> SQLitemlist { get; set; }
-        public static List<Database.Guild> SQLGuildlist { get; set; }
-        public static List<Database.GuildWar> SQLGuildWars { get; set; }
-        public static List<Database.GuildAlliance> SQLGuildAlliances { get; set; }
-        public static List<Database.ItemIndex> SQLitemindex { get; set; }
-
 
         public static Dictionary<Serial, Mobile> Mobiles { get { return m_Mobiles; } }
 
 		public static Dictionary<Serial, Item> Items { get { return m_Items; } }
 
-		public static Dictionary<CustomSerial, SaveData> Data { get { return _Data; } }
+        public static List<Mobile> BuffMobiles { get; set; }
+        public static List<Item> BuffItems { get; set; }
+        public static List<BaseGuild> BuffGuild { get; set; }
+        public static Dictionary<CustomSerial, SaveData> Data { get { return _Data; } }
 
 
 		public static bool OnDelete(IEntity entity)
@@ -1354,7 +1348,7 @@ namespace Server
             return false;
         }
 
-        private static bool ProcessGuilds(List<Database.Guild> dbg, List<GuildEntry> guilds)
+        private static bool ProcessGuilds(List<Database.Guild> dbg, List<GuildEntry> guilds, List<Database.GuildAlliance> ga, List<Database.GuildWar> gw)
         {
             Stopwatch watch = Stopwatch.StartNew();
             for (int i = 0; i < guilds.Count; ++i)
@@ -1366,6 +1360,8 @@ namespace Server
                 if (g != null)
                 {
                 g.Deserialize(gp);
+                    g.Deserialize(ga);
+                    g.Deserialize(gw);
                 }
             }
             watch.Stop();
@@ -1533,7 +1529,7 @@ namespace Server
 
             failedItems = ProcessItems(it, items);
 
-            failedGuilds = ProcessGuilds(g, guilds);
+            failedGuilds = ProcessGuilds(g, guilds, ga, gw);
 
             
             Type failedType = null;
@@ -1917,67 +1913,6 @@ namespace Server
 
 
 
-        private static void WriteSQL()
-        {
-            Stopwatch watch = Stopwatch.StartNew();
-            Console.WriteLine("SQL db write start");
-            using (Database.UODataContext writedb = new Database.UODataContext())
-            {
-                Database.LinqExtension.Truncate(writedb.Mobiles); //drop mobiles table
-                Database.LinqExtension.Truncate(writedb.Skills); //drop skills table
-                Database.LinqExtension.Truncate(writedb.MobIndexes); //drop mobile index table
-                Database.LinqExtension.Truncate(writedb.ItemIndexes); //drop items table
-                Database.LinqExtension.Truncate(writedb.Items); //drop items table
-                Database.LinqExtension.Truncate(writedb.GuildAlliances); //drop items table
-                Database.LinqExtension.Truncate(writedb.Guilds); //drop items table
-                Database.LinqExtension.Truncate(writedb.GuildWars); //drop items table
-                Parallel.Invoke(() =>
-                {
-                    writedb.BulkInsertAll(SQLmobs); //bulk insert mobs
-                    Console.WriteLine("Mobile DB write complete " + watch.Elapsed.TotalSeconds);
-                },  // close first Action
-                () =>
-                {
-                    writedb.BulkInsertAll(SQLSkills); //bulk insert skillz
-                    Console.WriteLine("Skills DB write complete " + +watch.Elapsed.TotalSeconds);
-                }, //close second Action
-                () =>
-                {
-                    writedb.BulkInsertAll(SQLmindex);
-                }, //close third Action
-                () =>
-                {
-                    writedb.BulkInsertAll(SQLitemlist); //bulk insert items
-                    Console.WriteLine("Item DB write complete " + watch.Elapsed.TotalSeconds);
-                },
-                () =>
-                {
-                    writedb.BulkInsertAll(SQLitemindex); //bulk insert items
-                },() =>
-                {
-                    writedb.BulkInsertAll(SQLGuildWars); //bulk insert items
-                    Console.WriteLine("GuildWars DB write complete " + watch.Elapsed.TotalSeconds);
-                }, () =>
-                {
-                    writedb.BulkInsertAll(SQLGuildlist); //bulk insert items
-                    Console.WriteLine("GuildList DB write complete " + watch.Elapsed.TotalSeconds);
-                }, () =>
-                {
-                    writedb.BulkInsertAll(SQLGuildAlliances); //bulk insert items
-                    Console.WriteLine("GuildAlliance DB write complete " + watch.Elapsed.TotalSeconds);
-                }); //close parallel.invoke
-
-            }
-            watch.Stop();
-            Console.WriteLine("SQL db save complete " + +watch.Elapsed.TotalSeconds);
-            
-            SQLmobs = new List<Database.Mobile>();
-            SQLSkills = new List<Database.Skill>();
-            SQLmindex = new List<Database.MobIndex>();
-            SQLitemlist = new List<Database.Item>();
-            SQLitemindex = new List<Database.ItemIndex>();
-        }
-
         public static void Save(bool message, bool permitBackgroundWrite)
 		{
 			if (m_Saving)
@@ -2008,18 +1943,6 @@ namespace Server
 
 			Stopwatch watch = Stopwatch.StartNew();
 
-			if (!Directory.Exists("Saves/Mobiles/"))
-			{
-				Directory.CreateDirectory("Saves/Mobiles/");
-			}
-			if (!Directory.Exists("Saves/Items/"))
-			{
-				Directory.CreateDirectory("Saves/Items/");
-			}
-			if (!Directory.Exists("Saves/Guilds/"))
-			{
-				Directory.CreateDirectory("Saves/Guilds/");
-			}
 			if (!Directory.Exists("Saves/Customs/"))
 			{
 				Directory.CreateDirectory("Saves/Customs/");
@@ -2060,7 +1983,10 @@ namespace Server
 			}
 
 			NetState.Resume();
-            if(Core.UseSQL) WriteSQL();
+            if (Core.UseSQL)
+            {
+                strategy.Save(null, true);
+            }
 
         }
 

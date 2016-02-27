@@ -26,7 +26,7 @@
         <elementListCompartment Id="e46ab3b1-8006-45a5-88f6-27155cfe5812" isExpanded="false" absoluteBounds="7.265, 3.71, 1.9700000000000002, 0.2493896484375" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <associationConnector edgePoints="[(6.375 : 3.52969482421875); (7.25 : 3.52969482421875)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(6.375 : 3.52969482421875); (7.25 : 3.52969482421875)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/UODataContext/Mobile/Mobile_Skill" />
       <nodes>
         <classShapeMoniker Id="f1feae42-085e-48e6-9dfd-e0db05a4ef05" />
@@ -37,12 +37,6 @@
       <DataClassMoniker Name="/UODataContext/Guild" />
       <nestedChildShapes>
         <elementListCompartment Id="3999430f-4707-40a0-998f-07fc8b9b00e2" absoluteBounds="1.0150000000000001, 4.3350000000000009, 1.9700000000000002, 4.2877197265625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
-      </nestedChildShapes>
-    </classShape>
-    <classShape Id="e0166a78-ed6e-440e-bce7-8230e69eff23" absoluteBounds="7.125, 5.5, 2, 1.7708968098958331">
-      <DataClassMoniker Name="/UODataContext/GuildAlliance" />
-      <nestedChildShapes>
-        <elementListCompartment Id="cf0293dd-0991-47f5-854b-f6c8c3af3782" absoluteBounds="7.14, 5.96, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
     <classShape Id="b29ab374-dcb2-443d-9beb-a8767e7885c0" absoluteBounds="4.125, 5.125, 2, 2.5401025390625">
@@ -57,12 +51,18 @@
         <elementListCompartment Id="ea1e3537-2fab-4adc-8724-4acd2f40600c" isExpanded="false" absoluteBounds="1.39, 3.085, 1.9700000000000002, 0.2493896484375" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <associationConnector edgePoints="[(4.375 : 3.21719482421875); (3.375 : 3.21719482421875)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(4.375 : 3.21719482421875); (3.375 : 3.21719482421875)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/UODataContext/Mobile/Mobile_Item" />
       <nodes>
         <classShapeMoniker Id="f1feae42-085e-48e6-9dfd-e0db05a4ef05" />
         <classShapeMoniker Id="326829d9-4512-47dc-a5a9-36befa99dd44" />
       </nodes>
     </associationConnector>
+    <classShape Id="3e414828-95b0-476d-b72e-259e804e181c" absoluteBounds="7, 5.125, 2, 2.1554996744791666">
+      <DataClassMoniker Name="/UODataContext/GuildAlliance" />
+      <nestedChildShapes>
+        <elementListCompartment Id="b69ad6d0-8453-47fe-8fea-7faebb9b2c40" absoluteBounds="7.015, 5.585, 1.9700000000000002, 1.5954996744791665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
   </nestedChildShapes>
 </ordesignerObjectsDiagram>

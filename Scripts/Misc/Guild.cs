@@ -239,6 +239,35 @@ namespace Server.Guilds
             return g;
         }
 
+        public Guild ReadGuild(int id)
+        {
+            return BaseGuild.Find(id) as Guild;
+        }
+        private List<Guild> ReadStrongGuildList(string glist)
+        {
+            List<Guild> g = new List<Guild>();
+
+            string[] itemlist = (glist).Split(new string[1] { ";" }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (string i in itemlist)
+            {
+                int p = 0;
+                Int32.TryParse(i, out p);
+                g.Add(ReadGuild(p));
+            }
+            return g;
+
+        }
+
+        public AllianceInfo(Database.GuildAlliance ga)
+        {
+                        m_Name = ga.m_Name;
+                        m_Leader = ReadGuild((int)ga.m_Leader);
+
+                        m_Members = ReadStrongGuildList(ga.m_Members);
+                        m_PendingMembers = ReadStrongGuildList(ga.m_PendingMembers);
+        }
+
+
         public AllianceInfo(GenericReader reader)
 		{
 			int version = reader.ReadInt();
@@ -578,6 +607,26 @@ namespace Server.Guilds
 					}
 			}
 		}
+        public Guild ReadGuild(int id)
+        {
+            return BaseGuild.Find(id) as Guild;
+        }
+        public WarDeclaration(Database.GuildWar gw)
+        {
+
+            m_Kills = (int)gw.m_Kills;
+            m_MaxKills = (int)gw.m_MaxKills;
+
+            //m_WarLength = reader.ReadTimeSpan(); //mess with this later
+            m_WarBeginning = (DateTime)gw.m_WarBeginning;
+
+                        m_Guild = ReadGuild((int)gw.m_Guild);
+                        m_Opponent = ReadGuild((int)gw.m_Opponent);
+
+                        m_WarRequester = (bool)gw.m_WarRequester;
+
+        }
+
 
         public Database.GuildWar Serialize(Database.GuildWar g)
         {
@@ -1445,7 +1494,7 @@ namespace Server.Guilds
         }
 
 
-        public override List<Database.GuildWar> Serialize(List<Database.GuildWar> g)
+        public override List<Database.GuildWar> Serialize(List<Database.GuildWar> g,ref int index)
         {
             CheckExpiredWars();
 
@@ -1456,7 +1505,9 @@ namespace Server.Guilds
                 Database.GuildWar gw = new Database.GuildWar();
                 gw = m_PendingWars[i].Serialize(gw);
                 gw.m_PendingWars = true;
+                gw.Id = index;
                 g.Add(gw);
+                index++;
             }
 
             for (int i = 0; i < m_AcceptedWars.Count; i++)
@@ -1464,7 +1515,9 @@ namespace Server.Guilds
                 Database.GuildWar gw = new Database.GuildWar();
                 gw = m_AcceptedWars[i].Serialize(gw);
                 gw.m_PendingWars = false;
+                gw.Id = index;
                 g.Add(gw);
+                index++;
             }
             #endregion
             return g;
@@ -1475,10 +1528,8 @@ namespace Server.Guilds
             {
                 Alliance.CheckLeader();
             }
-
-            #region Alliances
             bool isAllianceLeader = (m_AllianceLeader == null && m_AllianceInfo != null);
-           
+            #region Alliances
 
             if (isAllianceLeader)
             {
@@ -1486,9 +1537,20 @@ namespace Server.Guilds
             }
             else
             {
-                if(m_AllianceLeader != null) g.m_Leader = m_AllianceLeader.Id;
+                if (m_AllianceLeader != null)
+                {
+                    g.m_Leader = m_AllianceLeader.Id;
+                }
+                else
+                {
+                    return g;
+                }
             }
             #endregion
+
+            g.m_AllianceLeader = isAllianceLeader;
+            g.m_Guild = this.Id;
+            g.Id = this.Id;
             return g;
         }
 
@@ -1653,34 +1715,55 @@ namespace Server.Guilds
             return World.FindMobile(id);
         }
 
-
-        public override void Deserialize(Database.Guild g)
+        public override void Deserialize(List<Database.GuildWar> g)
         {
-            /* gw, ga
-                        m_PendingWars = new List<WarDeclaration>();
-                        for (int i = 0; i < count; i++)
-                        {
-                            m_PendingWars.Add(new WarDeclaration(reader));
-                        }
+            
+            m_PendingWars = new List<WarDeclaration>();
+            m_AcceptedWars = new List<WarDeclaration>();
+            foreach (Database.GuildWar gw in g)
+            {
+                if ((int)gw.m_Guild == this.Id)
+                {
+                    if ((bool)gw.m_PendingWars)
+                    {
+                        m_PendingWars.Add(new WarDeclaration(gw));
+                    }
+                    else
+                    {
+                        m_AcceptedWars.Add(new WarDeclaration(gw));
+                    }
+                }
+            }
 
-                        count = reader.ReadInt();
-                        m_AcceptedWars = new List<WarDeclaration>();
-                        for (int i = 0; i < count; i++)
-                        {
-                            m_AcceptedWars.Add(new WarDeclaration(reader));
-                        }
 
-                        bool isAllianceLeader = reader.ReadBool();
+        }
+
+        public override void Deserialize(List<Database.GuildAlliance> g)
+        {
+
+                foreach (Database.GuildAlliance ga in g)
+                {
+                if (ga != null)
+                {
+                    if (ga.Id == this.Id)
+                    {
+                        bool isAllianceLeader = (bool)ga.m_AllianceLeader;
 
                         if (isAllianceLeader)
                         {
-                            m_AllianceInfo = new AllianceInfo(reader);
+                            m_AllianceInfo = new AllianceInfo(ga);
                         }
                         else
                         {
-                            m_AllianceLeader = reader.ReadGuild() as Guild;
+                           if(ga.m_Leader != null) m_AllianceLeader = ReadGuild((int)ga.m_Leader);
                         }
-                        */
+                    }
+                }
+            }
+        }
+
+        public override void Deserialize(Database.Guild g)
+        {
 
                         m_AllyDeclarations = ReadStrongGuildList(g.m_AllyDeclarations);
                         m_AllyInvitations = ReadStrongGuildList(g.m_AllyInvitations);
@@ -1741,11 +1824,6 @@ namespace Server.Guilds
             {
                 m_PendingWars = new List<WarDeclaration>();
             }
-
-            /*
-            if ( ( !NewGuildSystem && m_Guildstone == null )|| m_Members.Count == 0 )
-            Disband();
-            */
 
             Timer.DelayCall(TimeSpan.Zero, VerifyGuild_Callback);
         }
