@@ -63,10 +63,12 @@ namespace Server
                     this.SaveGuildsSQL();
                 }, () =>
                 {
-                    this.SaveData();
+                    this.SaveDataSQL();
                 });
+                Console.WriteLine("Save Complete.");
                 World.BuffItems.Clear();
                 World.BuffMobiles.Clear();
+                World.BuffGuild.Clear();
             }
             else
             {
@@ -74,6 +76,7 @@ namespace Server
                 World.BuffMobiles = new List<Mobile>();
                 World.BuffItems = new List<Item>();
                 World.BuffGuild = new List<BaseGuild>();
+                World.BuffSaveData = new List<CustomsFramework.SaveData>();
                 Console.WriteLine("");
                 Parallel.Invoke(() =>
                 {
@@ -83,7 +86,7 @@ namespace Server
                     }
                 }, () =>
                 {
-                    foreach(Item i in World.Items.Values)
+                    foreach (Item i in World.Items.Values)
                     {
                         World.BuffItems.Add(i);
                     }
@@ -93,13 +96,19 @@ namespace Server
                     {
                         World.BuffGuild.Add(g);
                     }
+                }, () =>
+                {
+                    foreach (SaveData g in World.Data.Values)
+                    {
+                        World.BuffSaveData.Add(g);
+                    }
                 });
                 Console.WriteLine("Buffer created: " + watch.Elapsed.TotalSeconds);
             }
 
         }
 
-        
+
         public override void ProcessDecay()
         {
             while (this._decayQueue.Count > 0)
@@ -190,7 +199,7 @@ namespace Server
                 v.m_Locationz = m.Location.Z;
                 v.m_MagicDamageAbsorb = m.MagicDamageAbsorb;
                 v.m_Mana = m.Mana;
-                if(m.Map != null) v.m_Map = (byte)m.Map.MapIndex;
+                if (m.Map != null) v.m_Map = (byte)m.Map.MapIndex;
                 v.m_Name = m.Name;
                 v.m_NameHue = m.NameHue;
                 v.m_Player = m.Player;
@@ -290,10 +299,11 @@ namespace Server
                 mobs.Add(v);
                 m.FreeCache();
             }
-            
-            for (int i = 0; i < World.m_MobileTypes.Count; ++i) { 
 
-            Database.MobIndex a = new Database.MobIndex();
+            for (int i = 0; i < World.m_MobileTypes.Count; ++i)
+            {
+
+                Database.MobIndex a = new Database.MobIndex();
 
                 a.MobTypes = (World.m_MobileTypes[i].FullName);
                 a.Id = i;
@@ -309,8 +319,8 @@ namespace Server
                 writedb.BulkInsertAll(vsk); //bulk insert skillz
                 writedb.BulkInsertAll(mindex);
             }
-                watch.Stop();
-            Console.WriteLine("created mobile save data: " + watch.Elapsed.TotalSeconds);
+            watch.Stop();
+            Console.WriteLine("SQL mobile data created: " + watch.Elapsed.TotalSeconds);
         }
 
 
@@ -322,11 +332,11 @@ namespace Server
             List<Database.ItemIndex> itemindex = new List<Database.ItemIndex>();
 
             int itemCount = items.Count;
-            
+
 
             foreach (Item item in World.BuffItems)
             {
-                
+
                 MemoryStream strim = new MemoryStream();
                 GenericWriter bin = new BinaryFileWriter(strim, true);
                 if (item.Decays && item.Parent == null && item.Map != Map.Internal && (item.LastMoved + item.DecayTime) <= DateTime.UtcNow)
@@ -339,7 +349,7 @@ namespace Server
                 t.TypeID = item.m_TypeRef;
                 t.Serial = item.Serial.Value;
                 t.Id = item.Serial.Value;
-              
+
                 t = item.Serialize(t);
                 item.Serialize(bin);
                 bin.Close();
@@ -348,7 +358,7 @@ namespace Server
                 itemlist.Add(t);
                 item.FreeCache();
             }
-           
+
             for (int i = 0; i < World.m_ItemTypes.Count; ++i)
             {
                 Database.ItemIndex a = new Database.ItemIndex();
@@ -388,10 +398,10 @@ namespace Server
 
                 g = guild.Serialize(g);
                 GuildList.Add(g);
-                gwl = guild.Serialize(gwl,ref index);
-                if(gwl != null ) WarList.AddRange(gwl);
+                gwl = guild.Serialize(gwl, ref index);
+                if (gwl != null) WarList.AddRange(gwl);
                 ga = guild.Serialize(ga);
-                if(ga != null) GuildAlliances.Add(ga);
+                if (ga != null) GuildAlliances.Add(ga);
             }
 
             using (Database.UODataContext writedb = new Database.UODataContext())
@@ -407,46 +417,46 @@ namespace Server
             Console.WriteLine("SQL Guild data created: " + watch.Elapsed.TotalSeconds);
         }
 
-        protected void SaveData()
+        protected void SaveDataSQL()
         {
             Dictionary<CustomSerial, SaveData> data = World.Data;
+            List<Database.SaveData> s = new List<Database.SaveData>();
+            List<Database.SaveDataIndex> si = new List<Database.SaveDataIndex>();
 
-            GenericWriter indexWriter;
-            GenericWriter typeWriter;
-            GenericWriter dataWriter;
-
-            indexWriter = new BinaryFileWriter(World.DataIndexPath, false);
-            typeWriter = new BinaryFileWriter(World.DataTypesPath, false);
-            dataWriter = new BinaryFileWriter(World.DataBinaryPath, true);
-
-
-            indexWriter.Write(data.Count);
-
-            foreach (SaveData saveData in data.Values)
+            foreach (SaveData saveData in World.BuffSaveData)
             {
-                long start = dataWriter.Position;
+                MemoryStream stream = new MemoryStream();
+                GenericWriter bin = new BinaryFileWriter(stream, true);
 
-                indexWriter.Write(saveData._TypeID);
-                indexWriter.Write((int)saveData.Serial);
-                indexWriter.Write(start);
-
-                saveData.Serialize(dataWriter);
-
-
-
-                indexWriter.Write((int)(dataWriter.Position - start));
+                Database.SaveData sd = new Database.SaveData();
+                sd.TypeID = saveData._TypeID;
+                sd.Serial = (int)saveData.Serial;
+                sd.Id = (int)saveData.Serial;
+                saveData.Serialize(sd);
+                saveData.Serialize(bin);
+                bin.Close();
+                sd.Serialized = Convert.ToBase64String(stream.ToArray());
+                s.Add(sd);
+                stream.Close();
             }
 
-            typeWriter.Write(World._DataTypes.Count);
-
             for (int i = 0; i < World._DataTypes.Count; ++i)
-                typeWriter.Write(World._DataTypes[i].FullName);
+            {
+                Database.SaveDataIndex sdi = new Database.SaveDataIndex();
+                sdi.DataTypes = World._DataTypes[i].FullName;
+                sdi.Id = i;
+                si.Add(sdi);
+            }
 
-            indexWriter.Close();
-            typeWriter.Close();
-            dataWriter.Close();
+            using (Database.UODataContext writedb = new Database.UODataContext())
+            {
+                Database.LinqExtension.Truncate(writedb.SaveDataIndexes); //drop items table
+                Database.LinqExtension.Truncate(writedb.SaveDatas); //drop items table
+                writedb.BulkInsertAll(si); //bulk insert items
+                writedb.BulkInsertAll(s); //bulk insert items
+            }
+
         }
-
     }
  
 

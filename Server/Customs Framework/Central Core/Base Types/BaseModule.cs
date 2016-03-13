@@ -165,6 +165,7 @@ namespace CustomsFramework
 
 		public override void Serialize(GenericWriter writer)
 		{
+            if (Core.UseSQL) return;
 			writer.WriteVersion(0);
 
 			// Version 0
@@ -174,8 +175,32 @@ namespace CustomsFramework
 			writer.Write(_LastEditedTime);
 		}
 
-		public override void Deserialize(GenericReader reader)
+        public override Database.SaveData Serialize(Database.SaveData s)
+        {
+            if(_LinkedMobile != null) s.LinkedMobile = _LinkedMobile.Serial.Value;
+            if(_LinkedItem != null) s.LinkedItem = _LinkedItem.Serial.Value;
+            if (_CreatedTime.Ticks != 0)
+            {
+                s.CreatedTime = _CreatedTime;
+            }
+            if (_LastEditedTime.Ticks != 0) { 
+                s.LastEditedTime = _LastEditedTime;
+            }
+            return s;
+        }
+
+        public override void Deserialize(Database.SaveData a)
+        {
+            if(a.LinkedItem != null ) LinkedItem = World.FindItem((Serial)a.LinkedItem);
+            if (a.LinkedMobile != null) LinkedMobile = World.FindMobile((Serial)a.LinkedMobile);
+            if (a.CreatedTime != null) _CreatedTime = (DateTime)a.CreatedTime;
+            if (a.LastEditedTime != null) _LastEditedTime = (DateTime)a.LastEditedTime;
+        }
+
+        public override void Deserialize(GenericReader reader)
 		{
+            if (Core.UseSQLLoad) return;
+
 			int version = reader.ReadInt();
 
 			switch (version)

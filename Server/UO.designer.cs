@@ -54,6 +54,12 @@ namespace Database
     partial void InsertGuildAlliance(GuildAlliance instance);
     partial void UpdateGuildAlliance(GuildAlliance instance);
     partial void DeleteGuildAlliance(GuildAlliance instance);
+    partial void InsertSaveDataIndex(SaveDataIndex instance);
+    partial void UpdateSaveDataIndex(SaveDataIndex instance);
+    partial void DeleteSaveDataIndex(SaveDataIndex instance);
+    partial void InsertSaveData(SaveData instance);
+    partial void UpdateSaveData(SaveData instance);
+    partial void DeleteSaveData(SaveData instance);
     #endregion
 		
 		public UODataContext() : 
@@ -147,6 +153,22 @@ namespace Database
 			get
 			{
 				return this.GetTable<GuildAlliance>();
+			}
+		}
+		
+		public System.Data.Linq.Table<SaveDataIndex> SaveDataIndexes
+		{
+			get
+			{
+				return this.GetTable<SaveDataIndex>();
+			}
+		}
+		
+		public System.Data.Linq.Table<SaveData> SaveDatas
+		{
+			get
+			{
+				return this.GetTable<SaveData>();
 			}
 		}
 	}
@@ -4552,6 +4574,370 @@ namespace Database
 					this._m_Guild = value;
 					this.SendPropertyChanged("m_Guild");
 					this.Onm_GuildChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.SaveDataIndex")]
+	public partial class SaveDataIndex : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _Id;
+		
+		private string _DataTypes;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIdChanging(int value);
+    partial void OnIdChanged();
+    partial void OnDataTypesChanging(string value);
+    partial void OnDataTypesChanged();
+    #endregion
+		
+		public SaveDataIndex()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int Id
+		{
+			get
+			{
+				return this._Id;
+			}
+			set
+			{
+				if ((this._Id != value))
+				{
+					this.OnIdChanging(value);
+					this.SendPropertyChanging();
+					this._Id = value;
+					this.SendPropertyChanged("Id");
+					this.OnIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DataTypes", DbType="VarChar(50)")]
+		public string DataTypes
+		{
+			get
+			{
+				return this._DataTypes;
+			}
+			set
+			{
+				if ((this._DataTypes != value))
+				{
+					this.OnDataTypesChanging(value);
+					this.SendPropertyChanging();
+					this._DataTypes = value;
+					this.SendPropertyChanged("DataTypes");
+					this.OnDataTypesChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.SaveData")]
+	public partial class SaveData : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _Id;
+		
+		private System.Nullable<int> _TypeID;
+		
+		private System.Nullable<int> _Serial;
+		
+		private System.Nullable<bool> _Deleted;
+		
+		private System.Nullable<int> _LinkedMobile;
+		
+		private System.Nullable<int> _LinkedItem;
+		
+		private System.Nullable<System.DateTime> _CreatedTime;
+		
+		private System.Nullable<System.DateTime> _LastEditedTime;
+		
+		private System.Nullable<bool> _Enabled;
+		
+		private string _Serialized;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIdChanging(int value);
+    partial void OnIdChanged();
+    partial void OnTypeIDChanging(System.Nullable<int> value);
+    partial void OnTypeIDChanged();
+    partial void OnSerialChanging(System.Nullable<int> value);
+    partial void OnSerialChanged();
+    partial void OnDeletedChanging(System.Nullable<bool> value);
+    partial void OnDeletedChanged();
+    partial void OnLinkedMobileChanging(System.Nullable<int> value);
+    partial void OnLinkedMobileChanged();
+    partial void OnLinkedItemChanging(System.Nullable<int> value);
+    partial void OnLinkedItemChanged();
+    partial void OnCreatedTimeChanging(System.Nullable<System.DateTime> value);
+    partial void OnCreatedTimeChanged();
+    partial void OnLastEditedTimeChanging(System.Nullable<System.DateTime> value);
+    partial void OnLastEditedTimeChanged();
+    partial void OnEnabledChanging(System.Nullable<bool> value);
+    partial void OnEnabledChanged();
+    partial void OnSerializedChanging(string value);
+    partial void OnSerializedChanged();
+    #endregion
+		
+		public SaveData()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int Id
+		{
+			get
+			{
+				return this._Id;
+			}
+			set
+			{
+				if ((this._Id != value))
+				{
+					this.OnIdChanging(value);
+					this.SendPropertyChanging();
+					this._Id = value;
+					this.SendPropertyChanged("Id");
+					this.OnIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TypeID", DbType="Int")]
+		public System.Nullable<int> TypeID
+		{
+			get
+			{
+				return this._TypeID;
+			}
+			set
+			{
+				if ((this._TypeID != value))
+				{
+					this.OnTypeIDChanging(value);
+					this.SendPropertyChanging();
+					this._TypeID = value;
+					this.SendPropertyChanged("TypeID");
+					this.OnTypeIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Serial", DbType="Int")]
+		public System.Nullable<int> Serial
+		{
+			get
+			{
+				return this._Serial;
+			}
+			set
+			{
+				if ((this._Serial != value))
+				{
+					this.OnSerialChanging(value);
+					this.SendPropertyChanging();
+					this._Serial = value;
+					this.SendPropertyChanged("Serial");
+					this.OnSerialChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Deleted", DbType="Bit")]
+		public System.Nullable<bool> Deleted
+		{
+			get
+			{
+				return this._Deleted;
+			}
+			set
+			{
+				if ((this._Deleted != value))
+				{
+					this.OnDeletedChanging(value);
+					this.SendPropertyChanging();
+					this._Deleted = value;
+					this.SendPropertyChanged("Deleted");
+					this.OnDeletedChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LinkedMobile", DbType="Int")]
+		public System.Nullable<int> LinkedMobile
+		{
+			get
+			{
+				return this._LinkedMobile;
+			}
+			set
+			{
+				if ((this._LinkedMobile != value))
+				{
+					this.OnLinkedMobileChanging(value);
+					this.SendPropertyChanging();
+					this._LinkedMobile = value;
+					this.SendPropertyChanged("LinkedMobile");
+					this.OnLinkedMobileChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LinkedItem", DbType="Int")]
+		public System.Nullable<int> LinkedItem
+		{
+			get
+			{
+				return this._LinkedItem;
+			}
+			set
+			{
+				if ((this._LinkedItem != value))
+				{
+					this.OnLinkedItemChanging(value);
+					this.SendPropertyChanging();
+					this._LinkedItem = value;
+					this.SendPropertyChanged("LinkedItem");
+					this.OnLinkedItemChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedTime", DbType="DateTime")]
+		public System.Nullable<System.DateTime> CreatedTime
+		{
+			get
+			{
+				return this._CreatedTime;
+			}
+			set
+			{
+				if ((this._CreatedTime != value))
+				{
+					this.OnCreatedTimeChanging(value);
+					this.SendPropertyChanging();
+					this._CreatedTime = value;
+					this.SendPropertyChanged("CreatedTime");
+					this.OnCreatedTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LastEditedTime", DbType="DateTime")]
+		public System.Nullable<System.DateTime> LastEditedTime
+		{
+			get
+			{
+				return this._LastEditedTime;
+			}
+			set
+			{
+				if ((this._LastEditedTime != value))
+				{
+					this.OnLastEditedTimeChanging(value);
+					this.SendPropertyChanging();
+					this._LastEditedTime = value;
+					this.SendPropertyChanged("LastEditedTime");
+					this.OnLastEditedTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Enabled", DbType="Bit")]
+		public System.Nullable<bool> Enabled
+		{
+			get
+			{
+				return this._Enabled;
+			}
+			set
+			{
+				if ((this._Enabled != value))
+				{
+					this.OnEnabledChanging(value);
+					this.SendPropertyChanging();
+					this._Enabled = value;
+					this.SendPropertyChanged("Enabled");
+					this.OnEnabledChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Serialized", DbType="VarChar(MAX)")]
+		public string Serialized
+		{
+			get
+			{
+				return this._Serialized;
+			}
+			set
+			{
+				if ((this._Serialized != value))
+				{
+					this.OnSerializedChanging(value);
+					this.SendPropertyChanging();
+					this._Serialized = value;
+					this.SendPropertyChanged("Serialized");
+					this.OnSerializedChanged();
 				}
 			}
 		}

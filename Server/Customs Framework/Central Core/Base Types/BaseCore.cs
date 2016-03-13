@@ -63,15 +63,29 @@ namespace CustomsFramework
 
 		public override void Serialize(GenericWriter writer)
 		{
-			writer.WriteVersion(0);
+            if (Core.UseSQL) return;
+            writer.WriteVersion(0);
 
 			// Version 0
 			writer.Write(_Enabled);
 		}
 
-		public override void Deserialize(GenericReader reader)
+        public override Database.SaveData Serialize(Database.SaveData s)
+        {
+            s.Enabled = _Enabled;
+            return s;
+        }
+
+        public override void Deserialize(Database.SaveData a)
+        {
+            _Enabled = (bool)a.Enabled;
+
+        }
+        public override void Deserialize(GenericReader reader)
 		{
-			int version = reader.ReadInt();
+            if (Core.UseSQLLoad) return;
+
+            int version = reader.ReadInt();
 
 			switch (version)
 			{

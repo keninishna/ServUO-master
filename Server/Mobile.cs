@@ -5870,7 +5870,7 @@ namespace Server
                     m_Hits = (int)v.m_Hits;
                     m_Stam = (int)v.m_Stam;
                     m_Mana = (int)v.m_Mana;
-            m_Map = Map.Maps[(byte)v.m_Map];
+            if(v.m_Map != null) m_Map = Map.Maps[(byte)v.m_Map];
                     m_Blessed = (bool)v.m_Blessed;
                     m_Fame = (int)v.m_Fame;
                     m_Karma = (int)v.m_Karma;

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 9" name="UO">
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 11.25" name="UO">
   <DataContextMoniker Name="/UODataContext" />
   <nestedChildShapes>
     <classShape Id="2dca5854-7498-4bb2-8a14-8c6f135e6fe8" absoluteBounds="1.125, 0.625, 2, 1.1939925130208333">
@@ -62,6 +62,18 @@
       <DataClassMoniker Name="/UODataContext/GuildAlliance" />
       <nestedChildShapes>
         <elementListCompartment Id="b69ad6d0-8453-47fe-8fea-7faebb9b2c40" absoluteBounds="7.015, 5.585, 1.9700000000000002, 1.5954996744791665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="a67c0bac-d9cf-4995-8cdd-58a46e0efbd2" absoluteBounds="7, 0.875, 2, 1.1939925130208333">
+      <DataClassMoniker Name="/UODataContext/SaveDataIndex" />
+      <nestedChildShapes>
+        <elementListCompartment Id="6d11bf9a-91b5-43c3-8e59-e574c3b05837" absoluteBounds="7.015, 1.335, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="2dcd0cb3-8e6c-4276-b993-2c7664957a07" absoluteBounds="4, 8.25, 2, 2.7324039713541666">
+      <DataClassMoniker Name="/UODataContext/SaveData" />
+      <nestedChildShapes>
+        <elementListCompartment Id="7522b4fd-20f5-4c88-b285-b9cc7cd150ed" absoluteBounds="4.015, 8.71, 1.9700000000000002, 2.1724039713541665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
   </nestedChildShapes>

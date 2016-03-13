@@ -110,16 +110,16 @@ namespace Server
 
 
         public static Dictionary<Serial, Mobile> Mobiles { get { return m_Mobiles; } }
-
-		public static Dictionary<Serial, Item> Items { get { return m_Items; } }
+        public static Dictionary<CustomSerial, SaveData> Data { get { return _Data; } }
+        public static Dictionary<Serial, Item> Items { get { return m_Items; } }
 
         public static List<Mobile> BuffMobiles { get; set; }
         public static List<Item> BuffItems { get; set; }
         public static List<BaseGuild> BuffGuild { get; set; }
-        public static Dictionary<CustomSerial, SaveData> Data { get { return _Data; } }
+        public static List<SaveData> BuffSaveData { get; set; }
 
 
-		public static bool OnDelete(IEntity entity)
+        public static bool OnDelete(IEntity entity)
 		{
 			if (m_Saving || m_Loading)
 			{
@@ -957,7 +957,7 @@ namespace Server
                         ittypes.Add(dbitem);
                     }
                 }
-            }
+             }
 
 
             int count = ittypes.Count();
@@ -1270,7 +1270,118 @@ namespace Server
             return s;
         }
 
+        private static List<Database.SaveData> LoadSaveDataSQL()
+        {
+            List<Database.SaveData> s = new List<Database.SaveData>();
+            using (Database.UODataContext readdb = new Database.UODataContext())
+            {
 
+                var dbwars = (from x in readdb.SaveDatas select x); //google no help
+
+                foreach (Database.SaveData dbwar in dbwars)
+                {
+                    s.Add(dbwar);
+                }
+            }
+            return s;
+        }
+
+
+        private static List<DataEntry> ReadDataTypesSQL(List<Database.SaveData> v)
+        {
+
+            List<Database.SaveDataIndex> ittypes = new List<Database.SaveDataIndex>();
+            using (Database.UODataContext readdb = new Database.UODataContext())
+            {
+                var dbitems = (from x in readdb.SaveDataIndexes select x); //google no help
+                if (dbitems != null)
+                {
+                    foreach (Database.SaveDataIndex dbitem in dbitems)
+                    {
+                        ittypes.Add(dbitem);
+                    }
+                }
+            }
+
+
+            int count = ittypes.Count();
+            var types = new List<Tuple<ConstructorInfo, string>>(count);
+            string typeName = "";
+            for (int i = 0; i < count; ++i)
+            {
+
+                typeName = (ittypes[i]).DataTypes;
+
+                Type t = ScriptCompiler.FindTypeByFullName(typeName);
+
+                if (t == null)
+                {
+                    Console.WriteLine("failboat");
+
+                    if (!Core.Service)
+                    {
+                        Console.WriteLine("Types will not be deleted. An exception will be thrown.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Error: Type '{0}' was not found.", typeName);
+                    }
+
+                    throw new Exception(String.Format("Bad type '{0}'", typeName));
+                }
+
+                ConstructorInfo ctor = t.GetConstructor(m_SerialTypeArray);
+                ConstructorInfo cctor = t.GetConstructor(_CustomSerialTypeArray);
+
+                if (ctor != null)
+                {
+                    types.Add(new Tuple<ConstructorInfo, string>(ctor, typeName));
+                }
+                else if (cctor != null)
+                {
+                    types.Add(new Tuple<ConstructorInfo, string>(cctor, typeName));
+                }
+                else
+                {
+                    throw new Exception(String.Format("Type '{0}' does not have a serialization constructor", t));
+                }
+            }
+
+            var ctorArgs = new object[1];
+            _Data = new Dictionary<CustomSerial, SaveData>(count);
+            List<DataEntry> data = new List<DataEntry>();
+            for (int i = 0; i < v.Count(); ++i)
+            {
+                int typeID = (int)v[i].TypeID;
+                int serial = (int)v[i].Serial;
+
+                var objs = types[typeID];
+
+                if (objs == null)
+                {
+                    continue;
+                }
+
+                SaveData savedata = null;
+                ConstructorInfo ctor = objs.Item1;
+                typeName = objs.Item2;
+
+                ctorArgs[0] = (CustomSerial)serial;
+                savedata = (SaveData)(ctor.Invoke(ctorArgs));
+
+
+                if (savedata != null)
+                {
+                    data.Add(new DataEntry(savedata, typeID, typeName, 0, 0));
+                    AddData(savedata);
+                }
+
+            }
+
+            return data;
+        }
+
+        
         private static bool ProcessMobiles(List<Database.Mobile> v, List<MobileEntry> mobiles, List<Database.Skill> s)
         {
             Stopwatch watch = Stopwatch.StartNew();
@@ -1369,6 +1480,28 @@ namespace Server
             return false;
         }
 
+        private static bool ProcessSaveData(List<Database.SaveData> a, List<DataEntry> data)
+        {
+                    for (int i = 0; i < data.Count; ++i)
+                    {
+                        DataEntry entry = data[i];
+                        SaveData saveData = entry.Data;
+
+                                m_LoadingType = entry.TypeName;
+                                saveData.Deserialize(a[i]);
+                if (a[i].Serialized.Length != 0)
+                {
+                    byte[] byteArray = Convert.FromBase64String(a[i].Serialized);
+                    MemoryStream bin = new MemoryStream(byteArray);
+                    BinaryFileReader reader = new BinaryFileReader(new BinaryReader(bin));
+                    saveData.Deserialize(reader);
+                    bin.Close();
+                    reader.Close();
+                }
+                    }
+            return false;
+        }
+
         public static void LoadSQL()
         {
             if (m_Loaded)
@@ -1405,6 +1538,8 @@ namespace Server
             List<Database.Guild> g = new List<Database.Guild>();
             List<Database.GuildAlliance> ga = new List<Database.GuildAlliance>();
             List<Database.GuildWar> gw = new List<Database.GuildWar>();
+            List<Database.SaveData> sdl = new List<Database.SaveData>();
+
 
             Parallel.Invoke(() =>
             {
@@ -1424,6 +1559,9 @@ namespace Server
             }, () =>
             {
                 gw = LoadGuildWarsSQL();
+            }, () =>
+            {
+                sdl = LoadSaveDataSQL();
             });
 
             itemCount = it.Count();
@@ -1437,90 +1575,26 @@ namespace Server
             }, () =>
             {
                 mobiles = ReadMobTypesSQL(mobileCount, v);
+            }, () =>
+            {
+                data = ReadDataTypesSQL(sdl);
             });
             
 
-                guildCount = g.Count();
+            guildCount = g.Count();
+            dataCount = sdl.Count();
 
                     CreateGuildEventArgs createEventArgs = new CreateGuildEventArgs(-1);
-                    foreach(Database.Guild a in g)
-                    {
-
-                    int id = a.Id;
-
-
-                        createEventArgs.Id = id;
-                        EventSink.InvokeCreateGuild(createEventArgs);
-                        BaseGuild guild = createEventArgs.Guild;
-                        if (guild != null)
-                        {
-                            guilds.Add(new GuildEntry(guild, 0, 0));
-                        }
-                    }
-
-            
-
-            if (File.Exists(DataIndexPath) && File.Exists(DataTypesPath))
+            foreach (Database.Guild a in g)
             {
-                using (FileStream indexStream = new FileStream(DataIndexPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                int id = a.Id;
+                createEventArgs.Id = id;
+                EventSink.InvokeCreateGuild(createEventArgs);
+                BaseGuild guild = createEventArgs.Guild;
+                if (guild != null)
                 {
-                    BinaryReader indexReader = new BinaryReader(indexStream);
-
-                    using (FileStream typeStream = new FileStream(DataTypesPath, FileMode.Open, FileAccess.Read, FileShare.Read))
-                    {
-                        BinaryReader typeReader = new BinaryReader(typeStream);
-
-                        var types = ReadTypes(typeReader);
-
-                        dataCount = indexReader.ReadInt32();
-                        _Data = new Dictionary<CustomSerial, SaveData>(dataCount);
-
-                        for (int i = 0; i < dataCount; ++i)
-                        {
-                            int typeID = indexReader.ReadInt32();
-                            int serial = indexReader.ReadInt32();
-                            long pos = indexReader.ReadInt64();
-                            int length = indexReader.ReadInt32();
-
-                            var objects = types[typeID];
-
-                            if (objects == null)
-                            {
-                                continue;
-                            }
-
-                            SaveData saveData = null;
-                            ConstructorInfo ctor = objects.Item1;
-                            string typeName = objects.Item2;
-
-                            try
-                            {
-                                ctorArgs[0] = (CustomSerial)serial;
-                                saveData = (SaveData)(ctor.Invoke(ctorArgs));
-                            }
-                            catch
-                            {
-                                Utility.PushColor(ConsoleColor.Red);
-                                Console.WriteLine("Error loading {0}, Serial: {1}", typeName, serial);
-                                Utility.PopColor();
-                            }
-
-                            if (saveData != null)
-                            {
-                                data.Add(new DataEntry(saveData, typeID, typeName, pos, length));
-                                AddData(saveData);
-                            }
-                        }
-
-                        typeReader.Close();
-                    }
-
-                    indexReader.Close();
+                    guilds.Add(new GuildEntry(guild, 0, 0));
                 }
-            }
-            else
-            {
-                _Data = new Dictionary<CustomSerial, SaveData>();
             }
 
             bool failedGuilds = false, failedData = false, failedMobiles = false, failedItems = false;
@@ -1531,7 +1605,8 @@ namespace Server
 
             failedGuilds = ProcessGuilds(g, guilds, ga, gw);
 
-            
+            failedData = ProcessSaveData(sdl, data);
+
             Type failedType = null;
             Serial failedSerial = Serial.Zero;
             CustomSerial failedCustomSerial = CustomSerial.Zero;
@@ -1541,49 +1616,6 @@ namespace Server
 
             m_LoadingType = null;
 
-            if (!failedMobiles && !failedItems && !failedGuilds && File.Exists(DataBinaryPath))
-            {
-                using (FileStream stream = new FileStream(DataBinaryPath, FileMode.Open, FileAccess.Read, FileShare.Read))
-                {
-                    BinaryFileReader reader = new BinaryFileReader(new BinaryReader(stream));
-
-                    for (int i = 0; i < data.Count; ++i)
-                    {
-                        DataEntry entry = data[i];
-                        SaveData saveData = entry.Data;
-
-                        if (saveData != null)
-                        {
-                            reader.Seek(entry.Position, SeekOrigin.Begin);
-
-                            try
-                            {
-                                m_LoadingType = entry.TypeName;
-                                saveData.Deserialize(reader);
-
-                                if (reader.Position != (entry.Position + entry.Length))
-                                {
-                                    throw new Exception(String.Format("***** Bad serialize on {0} *****", saveData.GetType()));
-                                }
-                            }
-                            catch (Exception error)
-                            {
-                                data.RemoveAt(i);
-
-                                failed = error;
-                                failedData = true;
-                                failedType = saveData.GetType();
-                                failedTypeID = entry.TypeID;
-                                failedCustomSerial = saveData.Serial;
-
-                                break;
-                            }
-                        }
-                    }
-
-                    reader.Close();
-                }
-            }
 
             if (failedItems || failedMobiles || failedGuilds || failedData)
             {

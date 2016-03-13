@@ -102,7 +102,18 @@ namespace CustomsFramework
 			writer.Write(_Deleted);
 		}
 
-		public virtual void Deserialize(GenericReader reader)
+        public virtual Database.SaveData Serialize(Database.SaveData s)
+        {
+            s.Deleted = _Deleted;
+            return s;
+        }
+
+        public virtual void Deserialize(Database.SaveData a)
+        {
+            _Deleted = (bool)a.Deleted;
+        }
+
+        public virtual void Deserialize(GenericReader reader)
 		{
 			int version = reader.ReadInt();
 

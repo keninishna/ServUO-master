@@ -1564,11 +1564,7 @@ namespace Server.Guilds
             g.m_AllyDeclarations = WriteGuildList(m_AllyDeclarations);
             g.m_AllyInvitations = WriteGuildList(m_AllyInvitations);
 
-            if(m_TypeLastChange.Ticks == 0)
-            {
-                g.m_TypeLastChange = DateTime.UtcNow;
-            }
-            else
+            if(m_TypeLastChange.Ticks != 0)
             {
                 g.m_TypeLastChange = m_TypeLastChange;
             }
@@ -1769,7 +1765,7 @@ namespace Server.Guilds
                         m_AllyInvitations = ReadStrongGuildList(g.m_AllyInvitations);
 
 
-                        m_TypeLastChange = (DateTime)g.m_TypeLastChange;
+                        if(g.m_TypeLastChange != null) m_TypeLastChange = (DateTime)g.m_TypeLastChange;
 
 
                         m_Type = (GuildType)g.m_Type;
