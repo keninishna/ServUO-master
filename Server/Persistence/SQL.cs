@@ -50,6 +50,16 @@ namespace Server
 
         public override void Save(SaveMetrics metrics, bool permitBackgroundWrite)
         {
+            using (Database.UODataContext writedb = new Database.UODataContext())
+            {
+                if (!(writedb.DatabaseExists()))
+                {
+                    Console.WriteLine("No SQL db found, creating...");
+                    writedb.CreateDatabase();
+                    writedb.Dispose();
+                }
+            }
+
             if (permitBackgroundWrite)
             {
                 Parallel.Invoke(() =>
@@ -78,6 +88,7 @@ namespace Server
                 World.BuffGuild = new List<BaseGuild>();
                 World.BuffSaveData = new List<CustomsFramework.SaveData>();
                 Console.WriteLine("");
+
                 Parallel.Invoke(() =>
                 {
                     foreach (Mobile m in World.Mobiles.Values)
@@ -369,7 +380,7 @@ namespace Server
                 itemindex.Add(a);
             }
 
-            using (Database.UODataContext writedb = new Database.UODataContext())
+                using (Database.UODataContext writedb = new Database.UODataContext())
             {
                 Database.LinqExtension.Truncate(writedb.ItemIndexes); //drop items table
                 Database.LinqExtension.Truncate(writedb.Items); //drop items table

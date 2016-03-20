@@ -429,10 +429,6 @@ namespace Database
 		
 		private string _Data;
 		
-		private EntitySet<Skill> _Skills;
-		
-		private EntitySet<Item> _Items;
-		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -605,8 +601,6 @@ namespace Database
 		
 		public Mobile()
 		{
-			this._Skills = new EntitySet<Skill>(new Action<Skill>(this.attach_Skills), new Action<Skill>(this.detach_Skills));
-			this._Items = new EntitySet<Item>(new Action<Item>(this.attach_Items), new Action<Item>(this.detach_Items));
 			OnCreated();
 		}
 		
@@ -2250,32 +2244,6 @@ namespace Database
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mobile_Skill", Storage="_Skills", ThisKey="Id", OtherKey="Parent")]
-		public EntitySet<Skill> Skills
-		{
-			get
-			{
-				return this._Skills;
-			}
-			set
-			{
-				this._Skills.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mobile_Item", Storage="_Items", ThisKey="Id", OtherKey="m_Parent")]
-		public EntitySet<Item> Items
-		{
-			get
-			{
-				return this._Items;
-			}
-			set
-			{
-				this._Items.Assign(value);
-			}
-		}
-		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -2294,30 +2262,6 @@ namespace Database
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
-		}
-		
-		private void attach_Skills(Skill entity)
-		{
-			this.SendPropertyChanging();
-			entity.Mobile = this;
-		}
-		
-		private void detach_Skills(Skill entity)
-		{
-			this.SendPropertyChanging();
-			entity.Mobile = null;
-		}
-		
-		private void attach_Items(Item entity)
-		{
-			this.SendPropertyChanging();
-			entity.Mobile = this;
-		}
-		
-		private void detach_Items(Item entity)
-		{
-			this.SendPropertyChanging();
-			entity.Mobile = null;
 		}
 	}
 	
@@ -2425,8 +2369,6 @@ namespace Database
 		
 		private System.Nullable<int> _Cap;
 		
-		private EntityRef<Mobile> _Mobile;
-		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -2447,7 +2389,6 @@ namespace Database
 		
 		public Skill()
 		{
-			this._Mobile = default(EntityRef<Mobile>);
 			OnCreated();
 		}
 		
@@ -2482,10 +2423,6 @@ namespace Database
 			{
 				if ((this._Parent != value))
 				{
-					if (this._Mobile.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnParentChanging(value);
 					this.SendPropertyChanging();
 					this._Parent = value;
@@ -2571,40 +2508,6 @@ namespace Database
 					this._Cap = value;
 					this.SendPropertyChanged("Cap");
 					this.OnCapChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mobile_Skill", Storage="_Mobile", ThisKey="Parent", OtherKey="Id", IsForeignKey=true)]
-		public Mobile Mobile
-		{
-			get
-			{
-				return this._Mobile.Entity;
-			}
-			set
-			{
-				Mobile previousValue = this._Mobile.Entity;
-				if (((previousValue != value) 
-							|| (this._Mobile.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Mobile.Entity = null;
-						previousValue.Skills.Remove(this);
-					}
-					this._Mobile.Entity = value;
-					if ((value != null))
-					{
-						value.Skills.Add(this);
-						this._Parent = value.Id;
-					}
-					else
-					{
-						this._Parent = default(Nullable<int>);
-					}
-					this.SendPropertyChanged("Mobile");
 				}
 			}
 		}
@@ -3506,8 +3409,6 @@ namespace Database
 		
 		private string _strim;
 		
-		private EntityRef<Mobile> _Mobile;
-		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -3590,7 +3491,6 @@ namespace Database
 		
 		public Item()
 		{
-			this._Mobile = default(EntityRef<Mobile>);
 			OnCreated();
 		}
 		
@@ -4025,10 +3925,6 @@ namespace Database
 			{
 				if ((this._m_Parent != value))
 				{
-					if (this._Mobile.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.Onm_ParentChanging(value);
 					this.SendPropertyChanging();
 					this._m_Parent = value;
@@ -4334,40 +4230,6 @@ namespace Database
 					this._strim = value;
 					this.SendPropertyChanged("strim");
 					this.OnstrimChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mobile_Item", Storage="_Mobile", ThisKey="m_Parent", OtherKey="Id", IsForeignKey=true)]
-		public Mobile Mobile
-		{
-			get
-			{
-				return this._Mobile.Entity;
-			}
-			set
-			{
-				Mobile previousValue = this._Mobile.Entity;
-				if (((previousValue != value) 
-							|| (this._Mobile.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Mobile.Entity = null;
-						previousValue.Items.Remove(this);
-					}
-					this._Mobile.Entity = value;
-					if ((value != null))
-					{
-						value.Items.Add(this);
-						this._m_Parent = value.Id;
-					}
-					else
-					{
-						this._m_Parent = default(Nullable<int>);
-					}
-					this.SendPropertyChanged("Mobile");
 				}
 			}
 		}

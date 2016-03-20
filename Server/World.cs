@@ -1540,6 +1540,14 @@ namespace Server
             List<Database.GuildWar> gw = new List<Database.GuildWar>();
             List<Database.SaveData> sdl = new List<Database.SaveData>();
 
+            using (Database.UODataContext writedb = new Database.UODataContext())
+            {
+                if (!(writedb.DatabaseExists()))
+                {
+                    Console.WriteLine("No SQL DB found, creating...");
+                    writedb.CreateDatabase();
+                }
+            }
 
             Parallel.Invoke(() =>
             {
@@ -2017,7 +2025,7 @@ namespace Server
 			NetState.Resume();
             if (Core.UseSQL)
             {
-                strategy.Save(null, true);
+             Task.Factory.StartNew(()=>  strategy.Save(null, true));
             }
 
         }

@@ -90,8 +90,6 @@
       <Column Name="m_LogoutLocationz" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="m_Stabled" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="Data" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
-      <Association Name="Mobile_Skill" Member="Skills" ThisKey="Id" OtherKey="Parent" Type="Skill" />
-      <Association Name="Mobile_Item" Member="Items" ThisKey="Id" OtherKey="m_Parent" Type="Item" />
     </Type>
   </Table>
   <Table Name="dbo.MobIndex" Member="MobIndexes">
@@ -108,7 +106,6 @@
       <Column Name="Lock" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
       <Column Name="Base" Type="System.Double" DbType="Float" CanBeNull="true" />
       <Column Name="Cap" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Association Name="Mobile_Skill" Member="Mobile" ThisKey="Parent" OtherKey="Id" Type="Mobile" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.Guilds" Member="Guilds">
@@ -188,7 +185,6 @@
       <Column Name="m_Stackable" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
       <Column Name="m_ImplFlags" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="strim" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
-      <Association Name="Mobile_Item" Member="Mobile" ThisKey="m_Parent" OtherKey="Id" Type="Mobile" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.GuildAlliances" Member="GuildAlliances">

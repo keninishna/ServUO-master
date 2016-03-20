@@ -2622,7 +2622,10 @@ namespace Server
 			for (int i = 0; i < m_Items.Count; ++i)
 			{
 				Item item = m_Items[i];
-
+                if(item == null)
+                {
+                    Console.WriteLine();
+                }
 				item.UpdateTotals();
 
 				if (item.IsVirtualItem)
