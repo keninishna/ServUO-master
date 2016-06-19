@@ -2970,7 +2970,7 @@ namespace Server
                 }
                 else
                 {
-                    v.m_Map = ((byte)0xFF);
+                    v.m_Map = (255);
                 }
             }
 
@@ -3834,7 +3834,13 @@ namespace Server
 
             if (GetSaveFlag(flags, SaveFlag.Map))
             {
-                if (c.m_Map != null) m_Map = Map.Maps[(byte)c.m_Map];
+                if (c.m_Map != null)
+                {
+                    m_Map = Map.Maps[(byte)c.m_Map];
+                }else
+                {
+                    m_Map = Map.Maps[255];
+                }
 
             }
             else

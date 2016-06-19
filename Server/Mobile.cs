@@ -2619,24 +2619,31 @@ namespace Server
 			m_TotalWeight = 0;
 
 
-			for (int i = 0; i < m_Items.Count; ++i)
-			{
-				Item item = m_Items[i];
-                if(item == null)
+            for (int i = 0; i < m_Items.Count; ++i)
+            {
+                Item item = m_Items[i];
+                if (item == null)
                 {
                     Console.WriteLine();
+                    m_Items.RemoveAt(i);
+                    i--;
+
                 }
-				item.UpdateTotals();
+                else
+                {
 
-				if (item.IsVirtualItem)
-				{
-					continue;
-				}
+                    item.UpdateTotals();
 
-				m_TotalGold += item.TotalGold;
-				m_TotalItems += item.TotalItems + 1;
-				m_TotalWeight += item.TotalWeight + item.PileWeight;
-			}
+                    if (item.IsVirtualItem)
+                    {
+                        continue;
+                    }
+
+                    m_TotalGold += item.TotalGold;
+                    m_TotalItems += item.TotalItems + 1;
+                    m_TotalWeight += item.TotalWeight + item.PileWeight;
+                }
+            }
 
 			if (m_Holding != null)
 			{
