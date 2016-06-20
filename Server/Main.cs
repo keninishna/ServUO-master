@@ -104,6 +104,7 @@ namespace Server
 
 		public static MultiTextWriter MultiConsoleOut { get; private set; }
         public static bool UseSQL  { get; set; }
+        public static string SQLConnect { get; set; }
 
         /* 
 		 * DateTime.Now and DateTime.UtcNow are based on actual system clock time.
@@ -542,6 +543,9 @@ namespace Server
 			ScriptCompiler.Invoke("Configure");
 
 			Region.Load();
+
+            SQLConnect = Config.Get("AutoSave.SQLConnect", Database.Properties.Settings.Default.UOConnectionString);
+            
             if (Config.Get("AutoSave.SQLLoadEnabled", false))
                 {
                 UseSQLLoad = true;

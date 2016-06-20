@@ -50,7 +50,7 @@ namespace Server
 
         public override void Save(SaveMetrics metrics, bool permitBackgroundWrite)
         {
-            using (Database.UODataContext writedb = new Database.UODataContext())
+            using (Database.UODataContext writedb = new Database.UODataContext(Core.SQLConnect))
             {
                 if (!(writedb.DatabaseExists()))
                 {
@@ -321,7 +321,7 @@ namespace Server
                 mindex.Add(a);
             }
 
-            using (Database.UODataContext writedb = new Database.UODataContext())
+            using (Database.UODataContext writedb = new Database.UODataContext(Core.SQLConnect))
             {
                 Database.LinqExtension.Truncate(writedb.Mobiles); //drop mobiles table
                 Database.LinqExtension.Truncate(writedb.Skills); //drop skills table
@@ -380,7 +380,7 @@ namespace Server
                 itemindex.Add(a);
             }
 
-                using (Database.UODataContext writedb = new Database.UODataContext())
+                using (Database.UODataContext writedb = new Database.UODataContext(Core.SQLConnect))
             {
                 Database.LinqExtension.Truncate(writedb.ItemIndexes); //drop items table
                 Database.LinqExtension.Truncate(writedb.Items); //drop items table
@@ -415,7 +415,7 @@ namespace Server
                 if (ga != null) GuildAlliances.Add(ga);
             }
 
-            using (Database.UODataContext writedb = new Database.UODataContext())
+            using (Database.UODataContext writedb = new Database.UODataContext(Core.SQLConnect))
             {
                 Database.LinqExtension.Truncate(writedb.GuildAlliances); //drop items table
                 Database.LinqExtension.Truncate(writedb.Guilds); //drop items table
@@ -459,7 +459,7 @@ namespace Server
                 si.Add(sdi);
             }
 
-            using (Database.UODataContext writedb = new Database.UODataContext())
+            using (Database.UODataContext writedb = new Database.UODataContext(Core.SQLConnect))
             {
                 Database.LinqExtension.Truncate(writedb.SaveDataIndexes); //drop items table
                 Database.LinqExtension.Truncate(writedb.SaveDatas); //drop items table

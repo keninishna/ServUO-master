@@ -947,7 +947,7 @@ namespace Server
         {
             Stopwatch watch = Stopwatch.StartNew();
             List<Database.ItemIndex> ittypes = new List<Database.ItemIndex>();
-            using (Database.UODataContext readdb = new Database.UODataContext())
+            using (Database.UODataContext readdb = new Database.UODataContext(Core.SQLConnect))
             {
                 var dbitems = (from x in readdb.ItemIndexes select x); //google no help
                 if (dbitems != null)
@@ -1056,7 +1056,7 @@ namespace Server
         {
             Stopwatch watch = Stopwatch.StartNew();
             List<Database.MobIndex> mobs = new List<Database.MobIndex>();
-            using (Database.UODataContext readdb = new Database.UODataContext())
+            using (Database.UODataContext readdb = new Database.UODataContext(Core.SQLConnect))
             {
                 var mobindex = (from x in readdb.MobIndexes select x); //google no help
 
@@ -1165,7 +1165,7 @@ namespace Server
         {
             Stopwatch watch = Stopwatch.StartNew();
             List<Database.Mobile> v = new List<Database.Mobile>();
-            using (Database.UODataContext readdb = new Database.UODataContext() { CommandTimeout = 30, ObjectTrackingEnabled = false })
+            using (Database.UODataContext readdb = new Database.UODataContext(Core.SQLConnect) { CommandTimeout = 30, ObjectTrackingEnabled = false })
             {
                 var mobs = (from x in readdb.Mobiles select x); //google no help
                 if (mobs != null)
@@ -1185,7 +1185,7 @@ namespace Server
         {
             List<Database.Item> it = new List<Database.Item>();
             Stopwatch watch = Stopwatch.StartNew();
-            using (Database.UODataContext readdb = new Database.UODataContext() { CommandTimeout = 30, ObjectTrackingEnabled = false })
+            using (Database.UODataContext readdb = new Database.UODataContext(Core.SQLConnect) { CommandTimeout = 30, ObjectTrackingEnabled = false })
             {
                 var dbitems = (from x in readdb.Items select x); //google no help
 
@@ -1209,7 +1209,7 @@ namespace Server
         private static List<Database.Skill> LoadSkillsSQL()
         {
             List<Database.Skill> s = new List<Database.Skill>();
-            using (Database.UODataContext readdb = new Database.UODataContext())
+            using (Database.UODataContext readdb = new Database.UODataContext(Core.SQLConnect))
             {
 
                 var dbskills = (from x in readdb.Skills select x); //google no help
@@ -1225,7 +1225,7 @@ namespace Server
         private static List<Database.GuildAlliance> LoadGuildAllianceSQL()
         {
             List<Database.GuildAlliance> s = new List<Database.GuildAlliance>();
-            using (Database.UODataContext readdb = new Database.UODataContext())
+            using (Database.UODataContext readdb = new Database.UODataContext(Core.SQLConnect))
             {
 
                 var dbGuildAlliances = (from x in readdb.GuildAlliances select x); //google no help
@@ -1241,7 +1241,7 @@ namespace Server
         private static List<Database.Guild> LoadGuildsSQL()
         {
             List<Database.Guild> s = new List<Database.Guild>();
-            using (Database.UODataContext readdb = new Database.UODataContext())
+            using (Database.UODataContext readdb = new Database.UODataContext(Core.SQLConnect))
             {
 
                 var dbGuilds = (from x in readdb.Guilds select x); //google no help
@@ -1257,7 +1257,7 @@ namespace Server
         private static List<Database.GuildWar> LoadGuildWarsSQL()
         {
             List<Database.GuildWar> s = new List<Database.GuildWar>();
-            using (Database.UODataContext readdb = new Database.UODataContext())
+            using (Database.UODataContext readdb = new Database.UODataContext(Core.SQLConnect))
             {
 
                 var dbwars = (from x in readdb.GuildWars select x); //google no help
@@ -1273,7 +1273,7 @@ namespace Server
         private static List<Database.SaveData> LoadSaveDataSQL()
         {
             List<Database.SaveData> s = new List<Database.SaveData>();
-            using (Database.UODataContext readdb = new Database.UODataContext())
+            using (Database.UODataContext readdb = new Database.UODataContext(Core.SQLConnect))
             {
 
                 var dbwars = (from x in readdb.SaveDatas select x); //google no help
@@ -1291,7 +1291,7 @@ namespace Server
         {
 
             List<Database.SaveDataIndex> ittypes = new List<Database.SaveDataIndex>();
-            using (Database.UODataContext readdb = new Database.UODataContext())
+            using (Database.UODataContext readdb = new Database.UODataContext(Core.SQLConnect))
             {
                 var dbitems = (from x in readdb.SaveDataIndexes select x); //google no help
                 if (dbitems != null)
@@ -1540,7 +1540,7 @@ namespace Server
             List<Database.GuildWar> gw = new List<Database.GuildWar>();
             List<Database.SaveData> sdl = new List<Database.SaveData>();
 
-            using (Database.UODataContext writedb = new Database.UODataContext())
+            using (Database.UODataContext writedb = new Database.UODataContext(Core.SQLConnect))
             {
                 if (!(writedb.DatabaseExists()))
                 {
