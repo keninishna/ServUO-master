@@ -47,8 +47,8 @@ namespace Server
 		private static bool _Profiling;
 		private static DateTime _ProfileStart;
 		private static TimeSpan _ProfileTime;
-        public static readonly bool UseSQL = true;
-        public static readonly bool UseSQLLoad = true;
+
+        public static bool UseSQLLoad { get; set; }
         public static MessagePump MessagePump { get; set; }
 
 		public static Slice Slice;
@@ -103,8 +103,9 @@ namespace Server
 		public static Thread Thread { get; private set; }
 
 		public static MultiTextWriter MultiConsoleOut { get; private set; }
+        public static bool UseSQL  { get; set; }
 
-		/* 
+        /* 
 		 * DateTime.Now and DateTime.UtcNow are based on actual system clock time.
 		 * The resolution is acceptable but large clock jumps are possible and cause issues.
 		 * GetTickCount and GetTickCount64 have poor resolution.
@@ -115,7 +116,7 @@ namespace Server
 		 * enabling the usage of DateTime.UtcNow instead.
 		 */
 
-		private static readonly bool _HighRes = Stopwatch.IsHighResolution;
+        private static readonly bool _HighRes = Stopwatch.IsHighResolution;
 
 		private static readonly double _HighFrequency = 1000.0 / Stopwatch.Frequency;
 		private const double _LowFrequency = 1000.0 / TimeSpan.TicksPerSecond;
@@ -541,19 +542,15 @@ namespace Server
 			ScriptCompiler.Invoke("Configure");
 
 			Region.Load();
-            if (Core.UseSQL)
-            {
-                if (Core.UseSQLLoad)
+            if (Config.Get("AutoSave.SQLLoadEnabled", false))
                 {
+                UseSQLLoad = true;
                     World.LoadSQL();
-                }
-                else {
+                } else {
+                    UseSQLLoad = false;
                     World.Load();
                 }
-            }
-            else {
-                World.Load();
-            }
+
 
 			ScriptCompiler.Invoke("Initialize");
 

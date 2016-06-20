@@ -1954,79 +1954,158 @@ namespace Server
 
 
         public static void Save(bool message, bool permitBackgroundWrite)
-		{
-			if (m_Saving)
-			{
-				return;
-			}
-
-			++m_Saves;
-
-			NetState.FlushAll();
-			NetState.Pause();
-
-			WaitForWriteCompletion(); //Blocks Save until current disk flush is done.
-
-			m_Saving = true;
-
-			m_DiskWriteHandle.Reset();
-
-			if (message)
-			{
-				Broadcast(0x35, true, "The world is saving, please wait.");
-			}
-
-			SaveStrategy strategy = SaveStrategy.Acquire();
-			Console.WriteLine("Core: Using {0} save strategy", strategy.Name.ToLowerInvariant());
-
-			Console.Write("World: Saving...");
-
-			Stopwatch watch = Stopwatch.StartNew();
-
-			if (!Directory.Exists("Saves/Customs/"))
-			{
-				Directory.CreateDirectory("Saves/Customs/");
-			}
-
-			/*using ( SaveMetrics metrics = new SaveMetrics() ) {*/
-			strategy.Save(null, permitBackgroundWrite);
-			/*}*/
-
-			try
-			{
-				EventSink.InvokeWorldSave(new WorldSaveEventArgs(message));
-			}
-			catch (Exception e)
-			{
-				throw new Exception("World Save event threw an exception.  Save failed!", e);
-			}
-
-			watch.Stop();
-
-			m_Saving = false;
-
-			if (!permitBackgroundWrite)
-			{
-				NotifyDiskWriteComplete();
-				//Sets the DiskWriteHandle.  If we allow background writes, we leave this upto the individual save strategies.
-			}
-
-			ProcessSafetyQueues();
-
-			strategy.ProcessDecay();
-
-			Console.WriteLine("Save finished in {0:F2} seconds.", watch.Elapsed.TotalSeconds);
-
-			if (message)
-			{
-				Broadcast(0x35, true, "World save complete. The entire process took {0:F1} seconds.", watch.Elapsed.TotalSeconds);
-			}
-
-			NetState.Resume();
-            if (Core.UseSQL)
+        {
+            if (m_Saving)
             {
-             Task.Factory.StartNew(()=>  strategy.Save(null, true));
+                return;
             }
+            //EventSink.InvokeBeforeWorldSave(new BeforeWorldSaveEventArgs());
+
+            ++m_Saves;
+
+            NetState.FlushAll();
+            NetState.Pause();
+
+            WaitForWriteCompletion(); //Blocks Save until current disk flush is done.
+
+            m_Saving = true;
+
+            m_DiskWriteHandle.Reset();
+
+            if (message)
+            {
+                Broadcast(0x35, true, "The world is saving, please wait.");
+            }
+
+            SaveStrategy strategy = SaveStrategy.Acquire();
+            Console.WriteLine("Core: Using {0} save strategy", strategy.Name.ToLowerInvariant());
+
+            Console.WriteLine("World: Saving...");
+
+            Stopwatch watch = Stopwatch.StartNew();
+
+            if (!Directory.Exists("Saves/Mobiles/"))
+            {
+                Directory.CreateDirectory("Saves/Mobiles/");
+            }
+            if (!Directory.Exists("Saves/Items/"))
+            {
+                Directory.CreateDirectory("Saves/Items/");
+            }
+            if (!Directory.Exists("Saves/Guilds/"))
+            {
+                Directory.CreateDirectory("Saves/Guilds/");
+            }
+            if (!Directory.Exists("Saves/Customs/"))
+            {
+                Directory.CreateDirectory("Saves/Customs/");
+            }
+
+            /*using ( SaveMetrics metrics = new SaveMetrics() ) {*/
+            strategy.Save(null, permitBackgroundWrite);
+            /*}*/
+
+            try
+            {
+                EventSink.InvokeWorldSave(new WorldSaveEventArgs(message));
+            }
+            catch (Exception e)
+            {
+                throw new Exception("World Save event threw an exception.  Save failed!", e);
+            }
+
+            watch.Stop();
+
+            m_Saving = false;
+
+            if (!permitBackgroundWrite)
+            {
+                NotifyDiskWriteComplete();
+                //Sets the DiskWriteHandle.  If we allow background writes, we leave this upto the individual save strategies.
+            }
+
+            ProcessSafetyQueues();
+
+            strategy.ProcessDecay();
+
+            Console.WriteLine("Save finished in {0:F2} seconds.", watch.Elapsed.TotalSeconds);
+
+            if (message)
+            {
+                Broadcast(0x35, true, "World save complete. The entire process took {0:F1} seconds.", watch.Elapsed.TotalSeconds);
+            }
+
+            NetState.Resume();
+            //EventSink.InvokeAfterWorldSave(new AfterWorldSaveEventArgs());
+        }
+
+        public static void SaveSQL(bool message, bool permitBackgroundWrite)
+        {
+            if (m_Saving)
+            {
+                return;
+            }
+            
+            ++m_Saves;
+
+            NetState.FlushAll();
+            NetState.Pause();
+
+            WaitForWriteCompletion(); //Blocks Save until current disk flush is done.
+
+            m_Saving = true;
+
+            m_DiskWriteHandle.Reset();
+
+            if (message)
+            {
+                Broadcast(0x35, true, "The world is saving, please wait.");
+            }
+
+            SaveStrategy strategy = new SQL();
+            Console.WriteLine("Core: Using {0} save strategy", strategy.Name.ToLowerInvariant());
+
+            Console.Write("World: Saving...");
+
+            Stopwatch watch = Stopwatch.StartNew();
+
+            /*using ( SaveMetrics metrics = new SaveMetrics() ) {*/
+            strategy.Save(null, permitBackgroundWrite);
+            /*}*/
+
+            try
+            {
+                EventSink.InvokeWorldSave(new WorldSaveEventArgs(message));
+            }
+            catch (Exception e)
+            {
+                throw new Exception("World Save event threw an exception.  Save failed!", e);
+            }
+
+            watch.Stop();
+
+            m_Saving = false;
+
+            if (!permitBackgroundWrite)
+            {
+                NotifyDiskWriteComplete();
+                //Sets the DiskWriteHandle.  If we allow background writes, we leave this upto the individual save strategies.
+            }
+
+            ProcessSafetyQueues();
+
+            strategy.ProcessDecay();
+
+            Console.WriteLine("Save finished in {0:F2} seconds.", watch.Elapsed.TotalSeconds);
+
+            if (message)
+            {
+                Broadcast(0x35, true, "World save complete. The entire process took {0:F1} seconds.", watch.Elapsed.TotalSeconds);
+            }
+
+            NetState.Resume();
+
+            Task.Factory.StartNew(() => strategy.Save(null, true));
 
         }
 

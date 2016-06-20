@@ -2624,10 +2624,9 @@ namespace Server
                 Item item = m_Items[i];
                 if (item == null)
                 {
-                    Console.WriteLine();
+                    Console.WriteLine("Deleting Null item");
                     m_Items.RemoveAt(i);
                     i--;
-
                 }
                 else
                 {

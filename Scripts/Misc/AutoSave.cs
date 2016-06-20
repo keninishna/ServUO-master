@@ -17,7 +17,8 @@ namespace Server.Misc
         };
 
 		private static bool m_SavesEnabled = Config.Get("AutoSave.Enabled", true);
-
+        private static bool m_SQLSavesEnabled = Config.Get("AutoSave.SQLSaveEnabled", false);
+        
         public AutoSave()
             : base(m_Delay - m_Warning, m_Delay)
         {
@@ -36,9 +37,23 @@ namespace Server.Misc
             }
         }
 
+        public static bool SQLSavesEnabled
+        {
+            get
+            {
+                return m_SQLSavesEnabled;
+            }
+            set
+            {
+                m_SQLSavesEnabled = value;
+            }
+        }
+
+
         public static void Initialize()
         {
             new AutoSave().Start();
+            Core.UseSQL = m_SQLSavesEnabled;
             CommandSystem.Register("SetSaves", AccessLevel.Administrator, new CommandEventHandler(SetSaves_OnCommand));
         }
 
@@ -68,17 +83,23 @@ namespace Server.Misc
                 return;
 
             World.WaitForWriteCompletion();
-
-            try
+            if (m_SQLSavesEnabled)
             {
-                Backup();
+                World.SaveSQL(true, permitBackgroundWrite);
             }
-            catch (Exception e)
+            else
             {
-                Console.WriteLine("WARNING: Automatic backup FAILED: {0}", e);
-            }
+                try
+                {
+                    Backup();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("WARNING: Automatic backup FAILED: {0}", e);
+                }
 
-            World.Save(true, permitBackgroundWrite);
+                World.Save(true, permitBackgroundWrite);
+            }
         }
 
         protected override void OnTick()

@@ -24,14 +24,7 @@ namespace Server
 #endif
                 else
                 {
-                    if (Core.UseSQL)
-                    {
-                        return new SQL();
-                    }
-                    else
-                    {
                         return new DualSaveStrategy();
-                    }
                 }
             }
             else
